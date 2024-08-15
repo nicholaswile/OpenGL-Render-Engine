@@ -1,5 +1,5 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress.
+An OpenGL renderer using C++ and SDL. This is a work in progress.
 
 ### Credits
 <li>
