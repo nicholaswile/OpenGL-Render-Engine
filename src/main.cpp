@@ -6,8 +6,11 @@
 const char* TITLE = "NikoGL";
 const int WIDTH = 800, HEIGHT = 600;
 
+void err_msg(const char* msg);
+
 void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
+void render();
 
 int main(int argc, char* argv[])
 {
@@ -20,22 +23,20 @@ int main(int argc, char* argv[])
     SDL_Window *window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 
     if (!window) {
-        std::cout << "Failed to create SDL window! SDL_Error: " << SDL_GetError() << "\n";
-        SDL_Quit();
+        err_msg("Failed to Create SDL window");
         return -1;
     }
 
     SDL_GLContext glContext = SDL_GL_CreateContext(window);
 
     if (!glContext) {
-        std::cout << "Failed to create OpenGL context! SDL_Error: " << SDL_GetError() << "\n";
-        SDL_Quit();
+        err_msg("Failed to create OpenGL context");
         return -1;
     }
 
     // Initialize GLAD before calling OpenGL functions
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        std::cout << "Failed to initialize GLAD! SDL_Error: " << SDL_GetError() << "\n";
+        err_msg("Failed to initialize GLAD");
         return -1;
     }
 
@@ -47,8 +48,7 @@ int main(int argc, char* argv[])
         process_input(window);
 
         // Rendering
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        render();
 
         // Display
         SDL_GL_SwapWindow(window);
@@ -59,6 +59,11 @@ int main(int argc, char* argv[])
     SDL_Quit();
 
     return 0;
+}
+
+void err_msg(const char* msg) {
+    std::cout << msg << "! SDL_Error: " << SDL_GetError() << "\n";
+    SDL_Quit();
 }
 
 void process_input(SDL_Window *window)
@@ -74,4 +79,9 @@ void process_input(SDL_Window *window)
         }
 
     }
+}
+
+void render() {
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
