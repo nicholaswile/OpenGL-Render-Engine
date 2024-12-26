@@ -1,5 +1,5 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress.
+An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press 1/2 to toggle between wireframe/filled polygon modes. Compiles on Windows with `mingw32-make`. 
 
 ### Credits
 <li>
