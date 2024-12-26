@@ -1,6 +1,8 @@
 # OpenGL-Renderer
 An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press 1/2 to toggle between wireframe/filled polygon modes. Compiles on Windows with `mingw32-make`. 
 
+For reference: the VBO stores the vertices, the EBO stores the vertex indices for each triangle, and the VAO specifies the settings for OpenGL to draw the triangles.
+
 ### Credits
 <li>
 <a href="https://www.khronos.org/opengl/">OpenGL </a> Khronos Specifications. Copyright (c) 2013-2020 The Khronos Group Inc.
