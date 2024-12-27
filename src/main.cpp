@@ -10,7 +10,7 @@ void err_msg(const char* msg);
 
 void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
-void render();
+void render(unsigned int shader_IDs[], unsigned int VAO_IDs[]);
 
 int main(int argc, char* argv[])
 {
@@ -55,6 +55,22 @@ int main(int argc, char* argv[])
         -0.5f, 0.5f, 0.00f // top left
     };
 
+
+    // Test 1 - draw 2 triangles next to each other
+    float tri1_verts[] = {
+        // tri 1
+        -.6f, -.5f, .0f,
+        -.1f, -.5f, .0f,
+        -.35f, .5f, .0f,
+    };
+
+    float tri2_verts[] = {
+         // tri 2
+        .1f, -.5f, .0f,
+        .6f, -.5f, .0f,
+        .35f, .5f, .0f,
+    };
+
     unsigned int indices[] = {
         0, 1, 3, // first triangle
         1, 2, 3 // second triangle
@@ -83,15 +99,27 @@ int main(int argc, char* argv[])
     "FragColor = vec4(255.0f/255.0f, 182.0f/255.0f, 193.0f/255.0f, 1.0f);\n"
     "}\0";
 
+    // Test 3 - different shader for different object
+    const char* frag_shader_code2 = "#version 460 core\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    "FragColor = vec4(144.0f/255.0f, 238.0f/255.0f, 144.0f/255.0f, 1.0f);\n"
+    "}\0";
+
     // Create shader object / ID to store shader code
     unsigned int vert_shader_ID = glCreateShader(GL_VERTEX_SHADER);
     unsigned int frag_shader_ID = glCreateShader(GL_FRAGMENT_SHADER);
+    unsigned int frag_shader_ID2 = glCreateShader(GL_FRAGMENT_SHADER);
+
     // Attach shader code to shader object 
     glShaderSource(vert_shader_ID, 1, &vert_shader_code, NULL);
     glShaderSource(frag_shader_ID, 1, &frag_shader_code, NULL);
+    glShaderSource(frag_shader_ID2, 1, &frag_shader_code2, NULL);
+
     // Compile dynamically at run-time
     glCompileShader(vert_shader_ID);
     glCompileShader(frag_shader_ID);
+    glCompileShader(frag_shader_ID2);
 
     // Check if compilation was successful
     int success;
@@ -106,22 +134,41 @@ int main(int argc, char* argv[])
         glGetShaderInfoLog(frag_shader_ID, 512, NULL, info_log);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << info_log << "\n";
     }
+    glGetShaderiv(frag_shader_ID2, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(frag_shader_ID2, 512, NULL, info_log);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << info_log << "\n";
+    }
 
     // Shader program to linx both vert and frag shaders
-    unsigned int shader_ID = glCreateProgram();
-    glAttachShader(shader_ID, vert_shader_ID);
-    glAttachShader(shader_ID, frag_shader_ID);
-    glLinkProgram(shader_ID);
+    unsigned int shader_IDs[2];
+    shader_IDs[0] = glCreateProgram();
+    shader_IDs[1] = glCreateProgram();
 
-    glGetProgramiv(shader_ID, GL_LINK_STATUS, &success);
+    glAttachShader(shader_IDs[0], vert_shader_ID);
+    glAttachShader(shader_IDs[0], frag_shader_ID);
+
+    glAttachShader(shader_IDs[1], vert_shader_ID);
+    glAttachShader(shader_IDs[1], frag_shader_ID2);
+
+    glLinkProgram(shader_IDs[0]);
+    glGetProgramiv(shader_IDs[0], GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shader_ID, 512, NULL, info_log);
+        glGetProgramInfoLog(shader_IDs[0], 512, NULL, info_log);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << info_log << "\n";
+    }
+
+    glLinkProgram(shader_IDs[1]);
+    glGetProgramiv(shader_IDs[1], GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shader_IDs[1], 512, NULL, info_log);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << info_log << "\n";
     }
 
     // Delete shaders now that they've been linked
     glDeleteShader(vert_shader_ID);
     glDeleteShader(frag_shader_ID);
+    glDeleteShader(frag_shader_ID2);
 
     // Create vertex attribute object for configuring settings of how each vertex object is drawn
     unsigned int VAO_ID;
@@ -132,21 +179,35 @@ int main(int argc, char* argv[])
     glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);
     // Copy the user-defined vertex data to the buffer memory
     // Use static draw because this data is set once and not changed, else use DYNAMIC_DRAW
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tri1_verts), tri1_verts, GL_STATIC_DRAW);
     // Now the data has been stored on the GPU
 
     // Copy index array into element buffer to tell which vertices are used by a triangle
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Tell OpenGL how to interpret vertex data
     // Parameters: location=0 (set position in shader to 0), size of attribute=vec3 (3 values), type of data is vec* float, whether data should be normalized [0,1], stride (space between vertex attributes, 3 floats = 3*sizeof(float=32 bits) to get next vec3, offset of start of position data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Activate shader program
-    glUseProgram(shader_ID);
-    glBindVertexArray(VAO_ID);
+    // Test 2 - draw 2 triangles using 2 different VAOs and VBOs
+    unsigned int VBO_IDs[2], VAO_IDs[2];
+    glGenBuffers(2, VBO_IDs);
+    glGenVertexArrays(2, VAO_IDs);
+
+    glBindVertexArray(VAO_IDs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_IDs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tri1_verts), tri1_verts, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(VAO_IDs[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_IDs[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tri2_verts), tri2_verts, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     // ----------------------------------------------------------------------------------------
 
@@ -155,7 +216,7 @@ int main(int argc, char* argv[])
         process_input(window);
 
         // Rendering
-        render();
+        render(shader_IDs, VAO_IDs);
 
         // Display
         SDL_GL_SwapWindow(window);
@@ -190,9 +251,21 @@ void process_input(SDL_Window *window)
     }
 }
 
-void render() {
+void render(unsigned int shader_IDs[], unsigned int VAO_ID[]) {
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    // Activate shader program
+    glUseProgram(shader_IDs[0]);
+    glBindVertexArray(VAO_ID[0]);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Activate shader program
+    glUseProgram(shader_IDs[1]);
+    glBindVertexArray(VAO_ID[1]);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
     // Draw 6 indices (representing vertices) which are all non-negative ints
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 }
