@@ -3,6 +3,7 @@
 #include <glad/glad.h> // Manages function pointers for OpenGL
 #include <iostream>
 #include <cmath> // for sin()
+#include <vector>
 
 // Custom
 #include "../headers/shader.h"
@@ -14,7 +15,7 @@ void err_msg(const char* msg);
 
 void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
-void render(unsigned int shader_IDs[], unsigned int VAO_IDs[]);
+void render(const std::vector<Shader*> &shaders, const unsigned int VAO_IDs[]);
 
 int main(int argc, char* argv[])
 {
@@ -93,98 +94,11 @@ int main(int argc, char* argv[])
     glGenBuffers(1, &EBO_ID);
 
     // Create shaders to process data on GPU
-
-    // Position
-    const char* vert_shader_code = "#version 460 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 aColor;\n"
-    "out vec3 vertexColor;"
-    "void main() {\n"
-    "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    // "vertexColor = vec4(255.0f/255.0f, 182.0f/255.0f, 193.0f/255.0f, 1.0f);\n"
-    "vertexColor = aColor;\n"
-    "}\0";
-
-    // Final color
-    const char* frag_shader_code = "#version 460 core\n"
-    "out vec4 FragColor;\n"
-    "in vec3 vertexColor;\n"
-    "void main() {\n"
-    "FragColor = vec4(vertexColor, 1.0f);\n"
-    "}\0";
-
-    // Test 3 - different shader for different object
-    const char* frag_shader_code2 = "#version 460 core\n"
-    "out vec4 FragColor;\n"
-    "uniform vec4 globalColor;\n"
-    "void main() {\n"
-    // "FragColor = vec4(144.0f/255.0f, 238.0f/255.0f, 144.0f/255.0f, 1.0f);\n"
-    "FragColor = globalColor;\n"
-    "}\0";
-
-    // Create shader object / ID to store shader code
-    unsigned int vert_shader_ID = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int frag_shader_ID = glCreateShader(GL_FRAGMENT_SHADER);
-    unsigned int frag_shader_ID2 = glCreateShader(GL_FRAGMENT_SHADER);
-
-    // Attach shader code to shader object 
-    glShaderSource(vert_shader_ID, 1, &vert_shader_code, NULL);
-    glShaderSource(frag_shader_ID, 1, &frag_shader_code, NULL);
-    glShaderSource(frag_shader_ID2, 1, &frag_shader_code2, NULL);
-
-    // Compile dynamically at run-time
-    glCompileShader(vert_shader_ID);
-    glCompileShader(frag_shader_ID);
-    glCompileShader(frag_shader_ID2);
-
-    // Check if compilation was successful
-    int success;
-    char info_log[512];
-    glGetShaderiv(vert_shader_ID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vert_shader_ID, 512, NULL, info_log);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << info_log << "\n";
-    }
-    glGetShaderiv(frag_shader_ID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(frag_shader_ID, 512, NULL, info_log);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << info_log << "\n";
-    }
-    glGetShaderiv(frag_shader_ID2, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(frag_shader_ID2, 512, NULL, info_log);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << info_log << "\n";
-    }
-
-    // Shader program to linx both vert and frag shaders
-    unsigned int shader_IDs[2];
-    shader_IDs[0] = glCreateProgram();
-    shader_IDs[1] = glCreateProgram();
-
-    glAttachShader(shader_IDs[0], vert_shader_ID);
-    glAttachShader(shader_IDs[0], frag_shader_ID);
-
-    glAttachShader(shader_IDs[1], vert_shader_ID);
-    glAttachShader(shader_IDs[1], frag_shader_ID2);
-
-    glLinkProgram(shader_IDs[0]);
-    glGetProgramiv(shader_IDs[0], GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shader_IDs[0], 512, NULL, info_log);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << info_log << "\n";
-    }
-
-    glLinkProgram(shader_IDs[1]);
-    glGetProgramiv(shader_IDs[1], GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shader_IDs[1], 512, NULL, info_log);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << info_log << "\n";
-    }
-
-    // Delete shaders now that they've been linked
-    glDeleteShader(vert_shader_ID);
-    glDeleteShader(frag_shader_ID);
-    glDeleteShader(frag_shader_ID2);
+    Shader* shader1 = new Shader("shaders/vert1.glsl", "shaders/frag1.glsl");
+    Shader* shader2 = new Shader("shaders/vert1.glsl", "shaders/frag2.glsl");
+    std::vector<Shader*> shaders = std::vector<Shader*>();
+    shaders.push_back(shader1);
+    shaders.push_back(shader2);
 
     // Create vertex attribute object for configuring settings of how each vertex object is drawn
     unsigned int VAO_ID;
@@ -237,7 +151,7 @@ int main(int argc, char* argv[])
         process_input(window);
 
         // Rendering
-        render(shader_IDs, VAO_IDs);
+        render(shaders, VAO_IDs);
 
         // Display
         SDL_GL_SwapWindow(window);
@@ -272,22 +186,24 @@ void process_input(SDL_Window *window)
     }
 }
 
-void render(unsigned int shader_IDs[], unsigned int VAO_ID[]) {
+void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID[]) {
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Activate shader program
-    glUseProgram(shader_IDs[0]);
+    shaders[0]->use();
     glBindVertexArray(VAO_ID[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Activate shader program
-    glUseProgram(shader_IDs[1]);
+    shaders[1]->use();
 
     // Update uniform color
     float time = SDL_GetTicks()*1000; // MS --> S
     float green_val = sin(time)/2.0f+0.5f;
-    int vert_color_location = glGetUniformLocation(shader_IDs[1], "globalColor");
+    
+    // Can't use the SetFloat function as that only takes a single float rather than a vec4. Fix this later...
+    int vert_color_location = glGetUniformLocation(shaders[1]->ID, "globalColor");
     glUniform4f(vert_color_location, 0, green_val, 0, 1.0f);
     
     glBindVertexArray(VAO_ID[1]);
