@@ -161,6 +161,11 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+    // Free memory
+    for (const auto &shader : shaders)
+        delete shader;
+    shaders.clear();
+
     return 0;
 }
 
