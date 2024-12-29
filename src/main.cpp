@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
     // Create shaders to process data on GPU
     Shader* shader1 = new Shader("shaders/vert1.glsl", "shaders/frag1.glsl");
-    Shader* shader2 = new Shader("shaders/vert1.glsl", "shaders/frag2.glsl");
+    Shader* shader2 = new Shader("shaders/vert2.glsl", "shaders/frag2.glsl");
     std::vector<Shader*> shaders = std::vector<Shader*>();
     shaders.push_back(shader1);
     shaders.push_back(shader2);
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    // Free memory
+    // Free
     for (const auto &shader : shaders)
         delete shader;
     shaders.clear();
