@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <glad/glad.h> // Manages function pointers for OpenGL
 #include <iostream>
+#include <cmath> // for sin()
 
 const char* TITLE = "NikoGL";
 const int WIDTH = 800, HEIGHT = 600;
@@ -47,6 +48,11 @@ int main(int argc, char* argv[])
     // ----------------------------------------------------------------------------------------
     // Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
     
+    // Query the number of vertex attributes limited by the hardware (the number of 4-component input variables the shader program can take on the GPU)
+    int num_attrs;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attrs);
+    std::cout << "Max num of vertex attributes supported by hardware: " << num_attrs << "\n"; // This is 16 on my hardware.
+
     // Create resources
     float vertices[] = {
         -0.50f, -.50f, 0.00f, // bottom left
@@ -89,21 +95,27 @@ int main(int argc, char* argv[])
     // Position
     const char* vert_shader_code = "#version 460 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "out vec4 vertexColor;"
     "void main() {\n"
     "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "vertexColor = vec4(255.0f/255.0f, 182.0f/255.0f, 193.0f/255.0f, 1.0f);\n"
     "}\0";
+
     // Final color
     const char* frag_shader_code = "#version 460 core\n"
     "out vec4 FragColor;\n"
+    "in vec4 vertexColor;\n"
     "void main() {\n"
-    "FragColor = vec4(255.0f/255.0f, 182.0f/255.0f, 193.0f/255.0f, 1.0f);\n"
+    "FragColor = vertexColor;\n"
     "}\0";
 
     // Test 3 - different shader for different object
     const char* frag_shader_code2 = "#version 460 core\n"
     "out vec4 FragColor;\n"
+    "uniform vec4 globalColor;\n"
     "void main() {\n"
-    "FragColor = vec4(144.0f/255.0f, 238.0f/255.0f, 144.0f/255.0f, 1.0f);\n"
+    // "FragColor = vec4(144.0f/255.0f, 238.0f/255.0f, 144.0f/255.0f, 1.0f);\n"
+    "FragColor = globalColor;\n"
     "}\0";
 
     // Create shader object / ID to store shader code
@@ -262,6 +274,13 @@ void render(unsigned int shader_IDs[], unsigned int VAO_ID[]) {
 
     // Activate shader program
     glUseProgram(shader_IDs[1]);
+
+    // Update uniform color
+    float time = SDL_GetTicks()*1000; // MS --> S
+    float green_val = sin(time)/2.0f+0.5f;
+    int vert_color_location = glGetUniformLocation(shader_IDs[1], "globalColor");
+    glUniform4f(vert_color_location, 0, green_val, 0, 1.0f);
+    
     glBindVertexArray(VAO_ID[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
