@@ -64,10 +64,10 @@ int main(int argc, char* argv[])
 
     // Test 1 - draw 2 triangles next to each other
     float tri1_verts[] = {
-        // tri 1
-        -.6f, -.5f, .0f,
-        -.1f, -.5f, .0f,
-        -.35f, .5f, .0f,
+        // tri 1 verts              // tri 1 colors
+        -.6f, -.5f, .0f,            1.0f, 0.0f, 0.0f,
+        -.1f, -.5f, .0f,            0.0f, 1.0f, 0.0f,
+        -.35f, .5f, .0f,            0.0f, 0.0f, 1.0f,
     };
 
     float tri2_verts[] = {
@@ -95,18 +95,20 @@ int main(int argc, char* argv[])
     // Position
     const char* vert_shader_code = "#version 460 core\n"
     "layout (location = 0) in vec3 aPos;\n"
-    "out vec4 vertexColor;"
+    "layout (location = 1) in vec3 aColor;\n"
+    "out vec3 vertexColor;"
     "void main() {\n"
     "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "vertexColor = vec4(255.0f/255.0f, 182.0f/255.0f, 193.0f/255.0f, 1.0f);\n"
+    // "vertexColor = vec4(255.0f/255.0f, 182.0f/255.0f, 193.0f/255.0f, 1.0f);\n"
+    "vertexColor = aColor;\n"
     "}\0";
 
     // Final color
     const char* frag_shader_code = "#version 460 core\n"
     "out vec4 FragColor;\n"
-    "in vec4 vertexColor;\n"
+    "in vec3 vertexColor;\n"
     "void main() {\n"
-    "FragColor = vertexColor;\n"
+    "FragColor = vec4(vertexColor, 1.0f);\n"
     "}\0";
 
     // Test 3 - different shader for different object
@@ -212,8 +214,13 @@ int main(int argc, char* argv[])
     glBindVertexArray(VAO_IDs[0]);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_IDs[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(tri1_verts), tri1_verts, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    // Add a pointer for color 
+    // There's 6 floats for each vertex, the first 3 go to pos, the second 3 go to color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(VAO_IDs[1]);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_IDs[1]);
