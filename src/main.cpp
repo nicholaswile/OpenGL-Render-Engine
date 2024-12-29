@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cmath> // for sin()
 
+// Custom
+#include "../headers/shader.h"
+
 const char* TITLE = "NikoGL";
 const int WIDTH = 800, HEIGHT = 600;
 
@@ -44,7 +47,6 @@ int main(int argc, char* argv[])
     // Currently the renderer is same size as SDL Window. Could make it smaller to fit other things in the window later... 
     glViewport(0, 0, WIDTH, HEIGHT);
 
-    
     // ----------------------------------------------------------------------------------------
     // Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
     
