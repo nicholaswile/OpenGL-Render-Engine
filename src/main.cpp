@@ -192,24 +192,28 @@ void process_input(SDL_Window *window)
 }
 
 void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID[]) {
+    float time = SDL_GetTicks()*1000; // MS --> S
+    
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Activate shader program
     shaders[0]->use();
     glBindVertexArray(VAO_ID[0]);
+    float hoffset = (sin(time));
+    shaders[0]->set_float("hOffset", hoffset);
+
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // Activate shader program
     shaders[1]->use();
 
     // Update uniform color
-    float time = SDL_GetTicks()*1000; // MS --> S
     float green_val = sin(time)/2.0f+0.5f;
     
     // Can't use the SetFloat function as that only takes a single float rather than a vec4. Fix this later...
     int vert_color_location = glGetUniformLocation(shaders[1]->ID, "globalColor");
-    glUniform4f(vert_color_location, 0, green_val, 0, 1.0f);
+    glUniform4f(vert_color_location, 1.0f, green_val, 1.0f, 1.0f);
     
     glBindVertexArray(VAO_ID[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);

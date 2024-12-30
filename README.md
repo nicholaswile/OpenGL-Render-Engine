@@ -2,6 +2,7 @@
 An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press 1/2 to toggle between wireframe/filled polygon modes and esc to close. Compiles on Windows with `mingw32-make`. 
 
 You have to start somewhere...: 
+<img src="images/interpolated_color.png">
 |Filled|Wireframe|
 |:----:|:------:|
 |<img src="images/filled.png" style="height: 400px">|<img src="images/wireframe.png" style="height: 400px">|
