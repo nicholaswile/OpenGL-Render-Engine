@@ -1,18 +1,16 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press 1/2 to toggle between wireframe/filled polygon modes and esc to close. Press up and down arrows to mix between background and foreground. Compiles on Windows with `mingw32-make`. 
+An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press `1`/`2` to toggle between wireframe/filled polygon modes and `esc` to close. Press the `up` and `down` arrows to mix between background and foreground. Compiles on Windows with `mingw32-make`. 
 
-### A wild Sprigatito has appeared!~
+### (Textures) A wild Sprigatito has appeared!~
 |Empty Box|Mix|Sprigatito|
 |:-------:|:--------:|:--------:|
-|<img src="images/empty.png">|<img src="images/half.png">|<img src="images/full.png">
+|<img src="images/empty.png" style="height: 350px">|<img src="images/half.png" style="height: 350px">|<img src="images/full.png" style="height: 350px">
 
-<!--
-You have to start somewhere...: 
-<img src="images/interpolated_color.png">
+### (Shaders) Drawing triangles
 
-|Filled|Wireframe|
-|:----:|:------:|
-|<img src="images/filled.png" style="height: 400px">|<img src="images/wireframe.png" style="height: 400px">|
+|Solid|Solid|Wireframe|
+|:---:|:----:|:------:|
+|<img src="images/interpolated_color.png" style="height: 350px">|<img src="images/filled.png" style="height: 350px">|<img src="images/wireframe.png" style="height: 350px">|
 -->
 
 <!-- 
