@@ -4,14 +4,13 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 ### (Textures) A wild Sprigatito has appeared!~
 |Empty Box|Mix|Sprigatito|
 |:-------:|:--------:|:--------:|
-|<img src="images/empty.png" style="height: 350px">|<img src="images/half.png" style="height: 350px">|<img src="images/full.png" style="height: 350px">
+|<img src="images/empty.png" style="height: 300px">|<img src="images/half.png" style="height: 300px">|<img src="images/full.png" style="height: 300px">
 
 ### (Shaders) Drawing triangles
 
 |Solid|Solid|Wireframe|
 |:---:|:----:|:------:|
-|<img src="images/interpolated_color.png" style="height: 350px">|<img src="images/filled.png" style="height: 350px">|<img src="images/wireframe.png" style="height: 350px">|
--->
+|<img src="images/interpolated_color.png" style="height: 300px">|<img src="images/filled.png" style="height: 300px">|<img src="images/wireframe.png" style="height: 300px">|
 
 <!-- 
 For future reference: the VBO stores the vertices, the EBO stores the vertex indices for each triangle, and the VAO specifies the settings for OpenGL to draw the triangles.
