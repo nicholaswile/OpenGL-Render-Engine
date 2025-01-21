@@ -50,18 +50,16 @@ int main(int argc, char* argv[])
     }
 
 
-
     // Currently the renderer is same size as SDL Window. Could make it smaller to fit other things in the window later... 
     glViewport(0, 0, WIDTH, HEIGHT);
 
     // ----------------------------------------------------------------------------------------
     // Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
     
-    // Query the number of vertex attributes limited by the hardware (the number of 4-component input variables the shader program can take on the GPU)
+    // Query the number of vertex attributes limited by the hardware (the number of 4-component input variables the shader program can take on the GPU, for mine it's 16)
     int num_attrs;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attrs);
     std::cout << "Max num of vertex attributes supported by hardware: " << num_attrs << "\n"; // This is 16 on my hardware.
-
 
     // Create shaders to process data on GPU
     // Shader* shader1 = new Shader("shaders/vert1.glsl", "shaders/frag1.glsl");
@@ -71,7 +69,6 @@ int main(int argc, char* argv[])
     // shaders.push_back(shader1);
     // shaders.push_back(shader2);
     shaders.push_back(shader3);
-
 
     // Rectangle for mapping a texture on
     float vertices[] = {
@@ -83,8 +80,8 @@ int main(int argc, char* argv[])
     };
 
     unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3 // second triangle
+        0, 1, 3,    // first triangle
+        1, 2, 3     // second triangle
     };
 
     // // Test 1 - draw 2 triangles next to each other
@@ -102,30 +99,30 @@ int main(int argc, char* argv[])
     //     .35f, .5f, .0f,
     // };
 
+
+    // Copy the vertex and index data onto the GPU
     unsigned int VBO_ID, VAO_ID, EBO_ID;
-    glGenBuffers(1, &VBO_ID); // Vertex buffer object
-    glGenVertexArrays(1, &VAO_ID); // Vertex attribute object (settings, configs OpenGL how to read the data in VBO)
-    glGenBuffers(1, &EBO_ID); // Element buffer object tells OpenGL indices that make up each triangle
+    glGenBuffers(1, &VBO_ID);                                                           // Vertex buffer object
+    glGenVertexArrays(1, &VAO_ID);                                                      // Vertex attribute object (settings, configs OpenGL how to read the data in VBO)
+    glGenBuffers(1, &EBO_ID);                                                           // Element buffer object tells OpenGL indices that make up each triangle
 
     glBindVertexArray(VAO_ID);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_ID); // Configure buffer array 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Copy data to buffer memory
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);                                              // Configure buffer array 
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);          // Copy data to buffer memory
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID); // Configure element buffer array
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // Copy data to memory
-    // Now the data has been stored on the GPU
-
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);                                      // Configure element buffer array
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);    // Copy data to memory
 
     // Tell OpenGL how to interpret vertex data
     // Parameters: location=0 (set position in shader to 0), size of attribute=vec3 (3 values), type of data is vec* float, whether data should be normalized [0,1], stride (space between vertex attributes, 3 floats = 3*sizeof(float=32 bits) to get next vec3, offset of start of position data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(0); // will give layout(location = 0) in shaders. 
 
     // Add a pointer for color 
     // There's 6 floats for each vertex, the first 3 go to pos, the second 3 go to color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(1); // will give layout(location = 1) in shaders. 
     
     // Create new vertex attribute for this texture
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
@@ -149,11 +146,10 @@ int main(int argc, char* argv[])
     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
     // glEnableVertexAttribArray(0);
 
-    // Create resources for this project
-
     unsigned int textures[2];
-    glGenTextures(2, textures); // Binds num textures to texture array. Since just one texture, just 1 int.
+    glGenTextures(2, textures); // Binds num textures to texture array.
    
+    // TEXTURE 1 -------------------------------------------
     // configure settings
     // wrapping
     glActiveTexture(GL_TEXTURE0);
@@ -183,13 +179,11 @@ int main(int argc, char* argv[])
     // cleanup after generating texture and mipmaps by freeing image memory
     stbi_image_free(data);
 
-    // configure settings
-    // wrapping
+    // TEXTURE 2 -------------------------------------------
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textures[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // horizontal
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // vertical
-    // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR); // minifcation using nearest sampling with linear mipmap selection
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // magnification using nearest sampling (jagged but i think looks clearer)
 
@@ -206,9 +200,11 @@ int main(int argc, char* argv[])
     }
     stbi_image_free(data);
 
+    // Set uniform variables to appropriate texture
     shaders[0]->use();
     glUniform1i(glGetUniformLocation(shaders[0]->ID, "texture1"), 0); // Make sure each uniform sampler corresponds to correct texture unit
     shaders[0]->set_int("texture2", 1);
+
     // ----------------------------------------------------------------------------------------
 
     float mixer = 0.5;
@@ -256,10 +252,10 @@ void process_input(SDL_Window *window, float &mixer)
         if (event.type != SDL_KEYDOWN) return;
 
         switch (event.key.keysym.sym) {
-            case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                break;
-            case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);      break;  // Wireframe
-            case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);      break;  // Polygon
-            case SDLK_UP:           if (mixer+0.01f < 1.0f) mixer += 0.01f;                break; 
+            case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                        break;
+            case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);              break;  // Wireframe
+            case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
+            case SDLK_UP:           if (mixer+0.01f < 1.0f) mixer += 0.01f;                 break; 
             case SDLK_DOWN:         if (mixer-0.01f > 0.0f) mixer -= 0.01f;                 break;
         }  
 
@@ -277,6 +273,7 @@ void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID, cons
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
+// For using multiple VAOs
 void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID[]) {
     float time = SDL_GetTicks()*1000; // MS --> S
     
@@ -303,8 +300,4 @@ void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID[]) {
     
     glBindVertexArray(VAO_ID[1]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // Draw 6 indices (representing vertices) which are all non-negative ints
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
 }
