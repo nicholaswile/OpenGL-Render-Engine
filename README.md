@@ -37,7 +37,7 @@ For future reference: the VBO stores the vertices, the EBO stores the vertex ind
 <a href="https://github.com/nothings/stb/blob/master/stb_image.h">stb_image.h</a> for loading textures in OpenGL. <a href="https://github.com/nothings">Sean Barrett</a>.
 </li>
 <li>
-<a href="#">GLM</a> for vector and matrix data structures and operations.
+<a href="https://glm.g-truc.net/0.9.8/index.html">GLM</a> for vector and matrix data structures and operations.
 </li>
 <!--
 <li>
