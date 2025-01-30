@@ -7,7 +7,7 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 Support for 3D transformations with matrices and vectors.
 
 ### (Textures) A wild Sprigatito has appeared!~
-|Empty Box|Mix|Sprigatito|
+|100% Empty Box|Mix|100% Sprigatito|
 |:-------:|:--------:|:--------:|
 |<img src="images/empty.png" style="height: 300px">|<img src="images/half.png" style="height: 300px">|<img src="images/full.png" style="height: 300px">
 
