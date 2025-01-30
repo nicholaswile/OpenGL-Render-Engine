@@ -1,16 +1,24 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press `1`/`2` to toggle between wireframe/filled polygon modes and `esc` to close. Press the `up` and `down` arrows to mix between background and foreground. Compiles on Windows with `mingw32-make`. 
+An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press `1`/`2` to toggle between wireframe/filled polygon modes and `esc` to close. Press the `up` and `down` arrows to mix between background and foreground (for vert3.glsl/frag3.glsl). Compiles on Windows with `mingw32-make`. 
+
+### Transformations
+<img src="images/OGL_3DCrates.gif">
+
+Support for 3D transformations with matrices and vectors.
 
 ### (Textures) A wild Sprigatito has appeared!~
 |Empty Box|Mix|Sprigatito|
 |:-------:|:--------:|:--------:|
 |<img src="images/empty.png" style="height: 300px">|<img src="images/half.png" style="height: 300px">|<img src="images/full.png" style="height: 300px">
 
-### (Shaders) Drawing triangles
+Support for texture mapping.
 
+### (Shaders) Drawing triangles
 |Solid|Solid|Wireframe|
 |:---:|:----:|:------:|
 |<img src="images/interpolated_color.png" style="height: 300px">|<img src="images/filled.png" style="height: 300px">|<img src="images/wireframe.png" style="height: 300px">|
+
+Support for shaders.
 
 <!-- 
 For future reference: the VBO stores the vertices, the EBO stores the vertex indices for each triangle, and the VAO specifies the settings for OpenGL to draw the triangles.
@@ -27,6 +35,9 @@ For future reference: the VBO stores the vertices, the EBO stores the vertex ind
 </li>
 <li>
 <a href="https://github.com/nothings/stb/blob/master/stb_image.h">stb_image.h</a> for loading textures in OpenGL. <a href="https://github.com/nothings">Sean Barrett</a>.
+</li>
+<li>
+<a href="#">GLM</a> for vector and matrix data structures and operations.
 </li>
 <!--
 <li>

@@ -1,18 +1,33 @@
-#include <SDL.h>
-#include <SDL_image.h>
-#include <glad/glad.h> // Manages function pointers for OpenGL
+// Custom
+#include "../headers/shader.h"
+
+// CPP
 #include <iostream>
 #include <cmath> // for sin()
 #include <vector>
 
-// Custom
-#include "../headers/shader.h"
+// Includes
+// ========
 
-// External
-#include "../headers/stb_image.h"
+// SDL
+#include <SDL.h>
+#include <SDL_image.h>
+
+// GLAD
+#include <glad/glad.h> // Manages function pointers for OpenGL
+
+// STB_Image
+#include <stb_image.h>
+
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+// ========
 
 const char* TITLE = "NikoGL";
-const int WIDTH = 800, HEIGHT = 600;
+const int WIDTH = 1920, HEIGHT = 1080;
 
 void err_msg(const char* msg);
 
@@ -64,24 +79,134 @@ int main(int argc, char* argv[])
     // Create shaders to process data on GPU
     // Shader* shader1 = new Shader("shaders/vert1.glsl", "shaders/frag1.glsl");
     // Shader* shader2 = new Shader("shaders/vert2.glsl", "shaders/frag2.glsl");
-    Shader* shader3 = new Shader("shaders/vert3.glsl", "shaders/frag3.glsl"); // texture shader
+    // Shader* shader3 = new Shader("shaders/vert3.glsl", "shaders/frag3.glsl"); // texture shader
+    Shader* shader3 = new Shader("shaders/vert4.glsl", "shaders/frag4.glsl"); // texture shader
     std::vector<Shader*> shaders = std::vector<Shader*>();
     // shaders.push_back(shader1);
     // shaders.push_back(shader2);
     shaders.push_back(shader3);
 
     // Rectangle for mapping a texture on
-    float vertices[] = {
-        // positions              // colors               // tex coords (u,v)
-        -0.5f, -0.5f, 0.0f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
-         0.5f, -0.5f, 0.0f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
-         0.5f,  0.5f, 0.0f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
-        -0.5f,  0.5f, 0.0f,       1.0f, 0.0f, 1.0f,       0.0f, 1.0f,                 // top left
-    };
+    // float vertices[] = {
+    //     // positions              // colors               // tex coords (u,v)
+    //                                                                                      // front
+    //    // -0.5f, -0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
+    //    //  0.5f, -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
+    //    //  0.5f,  0.5f, -0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
+    //    // -0.5f,  0.5f, -0.5f,       1.0f, 0.0f, 1.0f,       0.0f, 1.0f,                 // top left
 
-    unsigned int indices[] = {
-        0, 1, 3,    // first triangle
-        1, 2, 3     // second triangle
+    //    // -0.5f, -0.5f,  0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
+    //    //  0.5f, -0.5f,  0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
+    //    //  0.5f,  0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
+    //    // -0.5f,  0.5f,  0.5f,       1.0f, 0.0f, 1.0f,       1.0f, 0.0f,                 // top left
+
+
+    //     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    //     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    //     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    //     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    //     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    //     -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    //     -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    //     -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    //     -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    //     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    //     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    //     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    //     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+    //     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    //     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    //     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    //     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    //     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    // };
+
+    // unsigned int indices[] = {
+    //     0, 1, 2,    // first triangle
+    //     2, 3, 0,    // second triangle
+
+    //     4, 5, 6, 
+    //     6, 7, 4,
+
+    //     7, 3, 0,
+    //     0, 4, 7,
+
+    //     6, 2, 1,
+    //     1, 5, 6,
+
+    //     0, 1, 5,
+    //     5, 4, 0,
+
+    //     3, 2, 6,
+    //     6, 7, 3
+         
+    // };
+
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
     // // Test 1 - draw 2 triangles next to each other
@@ -99,34 +224,33 @@ int main(int argc, char* argv[])
     //     .35f, .5f, .0f,
     // };
 
-
     // Copy the vertex and index data onto the GPU
-    unsigned int VBO_ID, VAO_ID, EBO_ID;
+    unsigned int VBO_ID, VAO_ID/*, EBO_ID*/;
     glGenBuffers(1, &VBO_ID);                                                           // Vertex buffer object
     glGenVertexArrays(1, &VAO_ID);                                                      // Vertex attribute object (settings, configs OpenGL how to read the data in VBO)
-    glGenBuffers(1, &EBO_ID);                                                           // Element buffer object tells OpenGL indices that make up each triangle
+    // glGenBuffers(1, &EBO_ID);                                                           // Element buffer object tells OpenGL indices that make up each triangle
 
     glBindVertexArray(VAO_ID);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);                                              // Configure buffer array 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);          // Copy data to buffer memory
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);                                      // Configure element buffer array
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);    // Copy data to memory
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);                                      // Configure element buffer array
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);    // Copy data to memory
 
     // Tell OpenGL how to interpret vertex data
     // Parameters: location=0 (set position in shader to 0), size of attribute=vec3 (3 values), type of data is vec* float, whether data should be normalized [0,1], stride (space between vertex attributes, 3 floats = 3*sizeof(float=32 bits) to get next vec3, offset of start of position data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0); // will give layout(location = 0) in shaders. 
 
     // Add a pointer for color 
     // There's 6 floats for each vertex, the first 3 go to pos, the second 3 go to color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1); // will give layout(location = 1) in shaders. 
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+    // glEnableVertexAttribArray(1); // will give layout(location = 1) in shaders. 
     
     // Create new vertex attribute for this texture
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
-    glEnableVertexAttribArray(2); // will give layout(location = 2) in shaders. 
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1); // will give layout(location = 2) in shaders. 
 
     // Test 2 - draw 2 triangles using 2 different VAOs and VBOs
     //glBufferData(GL_ARRAY_BUFFER, sizeof(tri1_verts), tri1_verts, GL_STATIC_DRAW);
@@ -205,6 +329,9 @@ int main(int argc, char* argv[])
     glUniform1i(glGetUniformLocation(shaders[0]->ID, "texture1"), 0); // Make sure each uniform sampler corresponds to correct texture unit
     shaders[0]->set_int("texture2", 1);
 
+    // Depth check
+    glEnable(GL_DEPTH_TEST);  
+
     // ----------------------------------------------------------------------------------------
 
     float mixer = 0.5;
@@ -228,7 +355,7 @@ int main(int argc, char* argv[])
 
     glDeleteVertexArrays(1, &VAO_ID);
     glDeleteBuffers(1, &VBO_ID);
-    glDeleteBuffers(1, &EBO_ID);
+    // glDeleteBuffers(1, &EBO_ID);
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(window);
@@ -264,13 +391,36 @@ void process_input(SDL_Window *window, float &mixer)
 
 void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID, const unsigned int textures[], const float mixer) {
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaders[0]->use();
     shaders[0]->set_float("mixer", mixer);
+    
+    // Transformation matrices
+
+    // We want to scale the shape then rotate it counter-clockwise a little every frame along the z-axis
+    // Order, right to left: scale <-- rotate => left to right: rotate * scale
+    glm::mat4 transform = glm::mat4(1.0f); // First create an identity matrix with w=1 (homogeneous coord) for scaling
+    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+    transform = glm::rotate(transform, ((float)SDL_GetTicks())/1000.0f, glm::vec3(1, 1, 1));
+    transform = glm::scale(transform, glm::vec3(.5, .5, .5));  
+
+    unsigned int transformLoc = glGetUniformLocation(shaders[0]->ID, "transform"); 
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform)); 
 
     glBindVertexArray(VAO_ID);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glm::mat4 transform2 = glm::mat4(1.0f); // First create an identity matrix with w=1 (homogeneous coord) for scaling
+    transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
+    transform2 = glm::rotate(transform2, ((float)SDL_GetTicks())/1000.0f, glm::vec3(-1, -1, -1));
+    transform2 = glm::scale(transform2, glm::vec3(.75, .75, .75));  
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform2));
+    glBindVertexArray(VAO_ID);
+    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 // For using multiple VAOs
@@ -278,7 +428,7 @@ void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID[]) {
     float time = SDL_GetTicks()*1000; // MS --> S
     
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Activate shader program
     shaders[0]->use();

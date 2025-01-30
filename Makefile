@@ -10,8 +10,11 @@ SDL2_IMG_LIB := C:\libraries\SDL2_image-devel-2.8.2-mingw\SDL2_image-2.8.2\i686-
 GLAD_INC := C:\libraries\glad\include
 GLAD_SRC := C:\libraries\glad\src
 
+STBI_INC := C:\libraries\stbi 
+GLM_INC := C:\libraries\glm-0.9.8.5\glm
+
 SDL_I := -I $(SDL2_INC) -I $(SDL2_IMG_INC)
-OPENGL_I := -I $(GLAD_INC)
+OPENGL_I := -I $(GLAD_INC) -I $(STBI_INC) -I $(GLM_INC)
 
 SDL_L := -L $(SDL2_LIB) -L $(SDL2_IMG_LIB)
 OPENGL_L := -L $(OPENGL_LIB)

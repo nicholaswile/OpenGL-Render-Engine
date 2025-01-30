@@ -6,7 +6,9 @@
                 "${workspaceFolder}/**",
                 "C:\\libraries\\SDL2_image-devel-2.8.2-mingw\\SDL2_image-2.8.2\\i686-w64-mingw32\\include\\SDL2",
                 "C:\\libraries\\SDL2-devel-2.30.4-mingw\\SDL2-2.30.4\\i686-w64-mingw32\\include\\SDL2",
-                "C:\\libraries\\glad\\include"
+                "C:\\libraries\\glad\\include",
+                "C:\\libraries\\stbi",
+                "C:\\libraries\\glm-0.9.8.5\\glm"
             ],
             "defines": [
                 "_DEBUG",
