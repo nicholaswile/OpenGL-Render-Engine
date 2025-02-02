@@ -1,10 +1,15 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Press `1`/`2` to toggle between wireframe/filled polygon modes and `esc` to close. Press the `up` and `down` arrows to mix between background and foreground (for vert3.glsl/frag3.glsl). Compiles on Windows with `mingw32-make`. 
+An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Compiles on Windows with `mingw32-make`. To create new scenes, add a scene header file in the scenes folder that extends the abstract scene base class. The new scene should implement a create function for creating objects such as textures, meshes, and shaders, as well as a custom render function. Then instantiate this scene in the main application file with the create function, and call the render function in the main game loop.
 
 ### Transformations
 <img src="images/OGL_3DCrates.gif">
 
 Support for 3D transformations with matrices and vectors.
+
+#### Current performance
+<img src="images/renderDoc.png">
+
+The current code achieves around 2000 FPS on average, 1500 FPS in this screenshot with a typical frame time of less than 1 ms. This capture is taken using RenderDoc.
 
 ### (Textures) A wild Sprigatito has appeared!~
 |100% Empty Box|Mix|100% Sprigatito|

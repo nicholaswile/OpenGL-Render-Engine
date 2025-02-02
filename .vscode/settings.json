@@ -52,6 +52,11 @@
         "xmemory": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "algorithm": "cpp",
+        "array": "cpp",
+        "cstdarg": "cpp",
+        "iomanip": "cpp",
+        "optional": "cpp"
     }
 }

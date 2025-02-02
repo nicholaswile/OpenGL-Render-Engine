@@ -1,40 +1,15 @@
-// Custom
-#include "../headers/shader.h"
-
-// CPP
-#include <iostream>
-#include <cmath> // for sin()
-#include <vector>
-
-// Includes
-// ========
+// Scenes
+#include "../scenes/scene1.h"
 
 // SDL
 #include <SDL.h>
-#include <SDL_image.h>
-
-// GLAD
-#include <glad/glad.h> // Manages function pointers for OpenGL
-
-// STB_Image
-#include <stb_image.h>
-
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-// ========
 
 const char* TITLE = "NikoGL";
 const int WIDTH = 1920, HEIGHT = 1080;
 
 void err_msg(const char* msg);
-
-void process_input(SDL_Window *window, float &mixer);
+void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
-void render(const std::vector<Shader*> &shaders, const unsigned int VAO_IDs[]);
-void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID, const unsigned int textures[], const float mixer);
 
 int main(int argc, char* argv[])
 {
@@ -64,303 +39,37 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-
     // Currently the renderer is same size as SDL Window. Could make it smaller to fit other things in the window later... 
     glViewport(0, 0, WIDTH, HEIGHT);
 
-    // ----------------------------------------------------------------------------------------
-    // Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
-    
     // Query the number of vertex attributes limited by the hardware (the number of 4-component input variables the shader program can take on the GPU, for mine it's 16)
     int num_attrs;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_attrs);
     std::cout << "Max num of vertex attributes supported by hardware: " << num_attrs << "\n"; // This is 16 on my hardware.
 
-    // Create shaders to process data on GPU
-    // Shader* shader1 = new Shader("shaders/vert1.glsl", "shaders/frag1.glsl");
-    // Shader* shader2 = new Shader("shaders/vert2.glsl", "shaders/frag2.glsl");
-    // Shader* shader3 = new Shader("shaders/vert3.glsl", "shaders/frag3.glsl"); // texture shader
-    Shader* shader3 = new Shader("shaders/vert4.glsl", "shaders/frag4.glsl"); // texture shader
-    std::vector<Shader*> shaders = std::vector<Shader*>();
-    // shaders.push_back(shader1);
-    // shaders.push_back(shader2);
-    shaders.push_back(shader3);
-
-    // Rectangle for mapping a texture on
-    // float vertices[] = {
-    //     // positions              // colors               // tex coords (u,v)
-    //                                                                                      // front
-    //    // -0.5f, -0.5f, -0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
-    //    //  0.5f, -0.5f, -0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
-    //    //  0.5f,  0.5f, -0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
-    //    // -0.5f,  0.5f, -0.5f,       1.0f, 0.0f, 1.0f,       0.0f, 1.0f,                 // top left
-
-    //    // -0.5f, -0.5f,  0.5f,       0.0f, 0.0f, 1.0f,       0.0f, 0.0f,                 // bottom left
-    //    //  0.5f, -0.5f,  0.5f,       0.0f, 1.0f, 0.0f,       1.0f, 0.0f,                 // bottom right
-    //    //  0.5f,  0.5f,  0.5f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f,                 // top right
-    //    // -0.5f,  0.5f,  0.5f,       1.0f, 0.0f, 1.0f,       1.0f, 0.0f,                 // top left
-
-
-    //     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-    //     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    //     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    //     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    //     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    //     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    //     -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-    //     -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    //     -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    //     -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    //     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    //     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    //     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    //     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-    //     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    //     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    //     -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    //     -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-    //     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    //     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    //     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    //     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    //     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    // };
-
-    // unsigned int indices[] = {
-    //     0, 1, 2,    // first triangle
-    //     2, 3, 0,    // second triangle
-
-    //     4, 5, 6, 
-    //     6, 7, 4,
-
-    //     7, 3, 0,
-    //     0, 4, 7,
-
-    //     6, 2, 1,
-    //     1, 5, 6,
-
-    //     0, 1, 5,
-    //     5, 4, 0,
-
-    //     3, 2, 6,
-    //     6, 7, 3
-         
-    // };
-
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
-
-    // // Test 1 - draw 2 triangles next to each other
-    // float tri1_verts[] = {
-    //     // tri 1 verts              // tri 1 colors
-    //     -.6f, -.5f, .0f,            1.0f, 0.0f, 0.0f,
-    //     -.1f, -.5f, .0f,            0.0f, 1.0f, 0.0f,
-    //     -.35f, .5f, .0f,            0.0f, 0.0f, 1.0f,
-    // };
-
-    // float tri2_verts[] = {
-    //      // tri 2
-    //     .1f, -.5f, .0f,
-    //     .6f, -.5f, .0f,
-    //     .35f, .5f, .0f,
-    // };
-
-    // Copy the vertex and index data onto the GPU
-    unsigned int VBO_ID, VAO_ID/*, EBO_ID*/;
-    glGenBuffers(1, &VBO_ID);                                                           // Vertex buffer object
-    glGenVertexArrays(1, &VAO_ID);                                                      // Vertex attribute object (settings, configs OpenGL how to read the data in VBO)
-    // glGenBuffers(1, &EBO_ID);                                                           // Element buffer object tells OpenGL indices that make up each triangle
-
-    glBindVertexArray(VAO_ID);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);                                              // Configure buffer array 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);          // Copy data to buffer memory
-
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_ID);                                      // Configure element buffer array
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);    // Copy data to memory
-
-    // Tell OpenGL how to interpret vertex data
-    // Parameters: location=0 (set position in shader to 0), size of attribute=vec3 (3 values), type of data is vec* float, whether data should be normalized [0,1], stride (space between vertex attributes, 3 floats = 3*sizeof(float=32 bits) to get next vec3, offset of start of position data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0); // will give layout(location = 0) in shaders. 
-
-    // Add a pointer for color 
-    // There's 6 floats for each vertex, the first 3 go to pos, the second 3 go to color
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-    // glEnableVertexAttribArray(1); // will give layout(location = 1) in shaders. 
-    
-    // Create new vertex attribute for this texture
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1); // will give layout(location = 2) in shaders. 
-
-    // Test 2 - draw 2 triangles using 2 different VAOs and VBOs
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(tri1_verts), tri1_verts, GL_STATIC_DRAW);
-    // unsigned int VBO_IDs[2], VAO_IDs[2];
-    // glGenBuffers(2, VBO_IDs);
-    // glGenVertexArrays(2, VAO_IDs);
-
-    // glBindVertexArray(VAO_IDs[0]);
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO_IDs[0]);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(tri1_verts), tri1_verts, GL_STATIC_DRAW);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(0);
-
-    // glBindVertexArray(VAO_IDs[1]);
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO_IDs[1]);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(tri2_verts), tri2_verts, GL_STATIC_DRAW);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(0);
-
-    unsigned int textures[2];
-    glGenTextures(2, textures); // Binds num textures to texture array.
-   
-    // TEXTURE 1 -------------------------------------------
-    // configure settings
-    // wrapping
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); // horizontal
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); // vertical
-    // filtering
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR); // minifcation using nearest sampling with linear mipmap selection
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // magnification using nearest sampling (jagged but i think looks clearer)
-
-    // Create textures
-    int width, height, nChannels;
-    // This function fills those variables above with the correct data
-    const char* filename = "textures/container.jpg";
-    unsigned char *data = stbi_load(filename, &width, &height, &nChannels, 0);
-    if (data) {
-        std::string dims = "("+std::to_string(width)+","+std::to_string(height)+")";
-        std::cout << "Succesfully loaded texture "<< filename << " " << dims << "\n";
-        // glTexImage2D - currently bound texture object has texture image attached to it
-        // specifies texture target (generates texture on object bound at that target), mipmap level, color format, width/height, ignore, format and datatype of source image, actual image data
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else {
-        std::cout << "Failed to load texture "<< filename << "\n";
-    }
-    // cleanup after generating texture and mipmaps by freeing image memory
-    stbi_image_free(data);
-
-    // TEXTURE 2 -------------------------------------------
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textures[1]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // horizontal
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // vertical
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR); // minifcation using nearest sampling with linear mipmap selection
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // magnification using nearest sampling (jagged but i think looks clearer)
-
-    const char* filename2 = "textures/sprigatito.png";
-    data = stbi_load(filename2, &width, &height, &nChannels, 0);
-    if (data) {
-        std::string dims = "("+std::to_string(width)+","+std::to_string(height)+")";
-        std::cout << "Succesfully loaded texture "<< filename2 << " " << dims << "\n";
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else {
-        std::cout << "Failed to load texture "<< filename2 << "\n";
-    }
-    stbi_image_free(data);
-
-    // Set uniform variables to appropriate texture
-    shaders[0]->use();
-    glUniform1i(glGetUniformLocation(shaders[0]->ID, "texture1"), 0); // Make sure each uniform sampler corresponds to correct texture unit
-    shaders[0]->set_int("texture2", 1);
-
     // Depth check
     glEnable(GL_DEPTH_TEST);  
 
-    // ----------------------------------------------------------------------------------------
+    // Note: Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
+    
+    Scene1 s;
+    s.create();
 
-    float mixer = 0.5;
-
+    // Main game loop
     while (!SDL_GL_WindowShouldClose) {
         // Input
-        process_input(window, mixer);
+        process_input(window);
 
         // Rendering
-        // render(shaders, VAO_IDs);
-        render(shaders, VAO_ID, textures, mixer);
+        s.render(float(SDL_GetTicks()));
 
         // Display
         SDL_GL_SwapWindow(window);
     }
 
-    // Free
-    for (const auto &shader : shaders)
-        delete shader;
-    shaders.clear();
-
-    glDeleteVertexArrays(1, &VAO_ID);
-    glDeleteBuffers(1, &VBO_ID);
-    // glDeleteBuffers(1, &EBO_ID);
-
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
 
     return 0;
 }
@@ -370,7 +79,8 @@ void err_msg(const char* msg) {
     SDL_Quit();
 }
 
-void process_input(SDL_Window *window, float &mixer)
+float mixer;
+void process_input(SDL_Window *window)
 {
     SDL_Event event;
     if (SDL_PollEvent(&event)) {
@@ -385,69 +95,5 @@ void process_input(SDL_Window *window, float &mixer)
             case SDLK_UP:           if (mixer+0.01f < 1.0f) mixer += 0.01f;                 break; 
             case SDLK_DOWN:         if (mixer-0.01f > 0.0f) mixer -= 0.01f;                 break;
         }  
-
     }
-}
-
-void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID, const unsigned int textures[], const float mixer) {
-    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    shaders[0]->use();
-    shaders[0]->set_float("mixer", mixer);
-    
-    // Transformation matrices
-
-    // We want to scale the shape then rotate it counter-clockwise a little every frame along the z-axis
-    // Order, right to left: scale <-- rotate => left to right: rotate * scale
-    glm::mat4 transform = glm::mat4(1.0f); // First create an identity matrix with w=1 (homogeneous coord) for scaling
-    transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-    transform = glm::rotate(transform, ((float)SDL_GetTicks())/1000.0f, glm::vec3(1, 1, 1));
-    transform = glm::scale(transform, glm::vec3(.5, .5, .5));  
-
-    unsigned int transformLoc = glGetUniformLocation(shaders[0]->ID, "transform"); 
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform)); 
-
-    glBindVertexArray(VAO_ID);
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    glm::mat4 transform2 = glm::mat4(1.0f); // First create an identity matrix with w=1 (homogeneous coord) for scaling
-    transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
-    transform2 = glm::rotate(transform2, ((float)SDL_GetTicks())/1000.0f, glm::vec3(-1, -1, -1));
-    transform2 = glm::scale(transform2, glm::vec3(.75, .75, .75));  
-
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform2));
-    glBindVertexArray(VAO_ID);
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-}
-
-// For using multiple VAOs
-void render(const std::vector<Shader*> &shaders, const unsigned int VAO_ID[]) {
-    float time = SDL_GetTicks()*1000; // MS --> S
-    
-    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Activate shader program
-    shaders[0]->use();
-    glBindVertexArray(VAO_ID[0]);
-    float hoffset = (sin(time));
-    shaders[0]->set_float("hOffset", hoffset);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // Activate shader program
-    shaders[1]->use();
-
-    // Update uniform color
-    float green_val = sin(time)/2.0f+0.5f;
-    
-    // Can't use the SetFloat function as that only takes a single float rather than a vec4. Fix this later...
-    int vert_color_location = glGetUniformLocation(shaders[1]->ID, "globalColor");
-    glUniform4f(vert_color_location, 1.0f, green_val, 1.0f, 1.0f);
-    
-    glBindVertexArray(VAO_ID[1]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
