@@ -4,8 +4,11 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 ### Creating custom scenes
 To create new scenes, add a scene header file in the scenes folder that extends the abstract scene base class. The new scene should implement a load function for creating and loading objects such as textures, meshes, and shaders; an unload function, and a custom render function. 
 
+#### Creating and using custom shaders
+Implement your GLSL shaders and add them to the shaders folder. To use them in your scene, load them using the shader object. 
+
 #### Scene management and scene transitions
-Add this to the scene vector in the main application. To change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
+Push your new scene file to the scene vector in the scene manager header file. When playing the game, to change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
 
 ### (Scene 1) 3D Transformations
 <img src="images/OGL_3DCrates.gif">

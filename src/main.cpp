@@ -1,7 +1,4 @@
-// Scenes
-#include "../headers/scene.h"
-#include "../scenes/scene1.h"
-#include "../scenes/scene2.h"
+#include "../headers/scenemanager.h"
 
 // SDL
 #include <SDL.h>
@@ -12,10 +9,6 @@ const int WIDTH = 1920, HEIGHT = 1080;
 void err_msg(const char* msg);
 void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
-
-// Scene mgmt
-std::vector<Scene*> scenes;
-int current_scene = 0;
 
 int main(int argc, char* argv[])
 {
@@ -58,28 +51,15 @@ int main(int argc, char* argv[])
 
     // Note: Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
     
-    Scene* s1 = new Scene1();
-    Scene* s2 = new Scene2();
-    s1->load();
-    scenes.push_back(s1);
-    scenes.push_back(s2);
-
-    int last_scene = current_scene;
+    SceneManager::init();
     
     // Main game loop
     while (!SDL_GL_WindowShouldClose) {
         // Input
         process_input(window);
 
-        // If scene changes, load next scene
-        if (last_scene != current_scene) {
-            scenes[last_scene]->unload();
-            last_scene = current_scene;
-            scenes[current_scene]->load();
-        }
-
         // Rendering
-        scenes[current_scene]->render(float(SDL_GetTicks()));
+        SceneManager::render((float)SDL_GetTicks());
 
         // Display
         SDL_GL_SwapWindow(window);
@@ -109,10 +89,11 @@ void process_input(SDL_Window *window)
             case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                        break;
             case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);              break;  // Wireframe
             case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
+
             // Eventually i'll make a seperate input class and handle input differently depending on scene
-            case SDLK_UP:           if (Scene2::mixer+0.01f < 1.0f) Scene2::mixer += 0.01f;                 break; 
-            case SDLK_DOWN:         if (Scene2::mixer-0.01f > 0.0f) Scene2::mixer -= 0.01f;                 break;
-            case SDLK_RIGHT:        current_scene = ((current_scene+1)%scenes.size());      break;
+            case SDLK_UP:           if (Scene2::mixer+0.01f < 1.0f) Scene2::mixer += 0.01f; break; 
+            case SDLK_DOWN:         if (Scene2::mixer-0.01f > 0.0f) Scene2::mixer -= 0.01f; break;
+            case SDLK_RIGHT:        SceneManager::load_next();                              break;
         }  
     }
 }
