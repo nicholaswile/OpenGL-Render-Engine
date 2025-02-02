@@ -2,9 +2,9 @@
 # define SCENEMANAGER_H
 
 // Scenes
-#include "../headers/scene.h"
-#include "../scenes/scene1.h"
-#include "../scenes/scene2.h"
+#include "scene.h"
+#include "scene1.h"
+#include "scene2.h"
 
 class SceneManager {
 public:
@@ -14,5 +14,6 @@ public:
     static void load_next();
     static void render(float deltatime);
 };
+
 
 #endif
