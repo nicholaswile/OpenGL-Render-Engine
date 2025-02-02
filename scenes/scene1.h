@@ -12,17 +12,23 @@ private:
     unsigned int _VBO_ID;
     unsigned int _EBO_ID;
 public:
+    Scene1() {}
     ~Scene1() {
         glDeleteVertexArrays(1, &_VAO_ID);
         glDeleteBuffers(1, &_VBO_ID);
         glDeleteBuffers(1, &_EBO_ID);
     }
-    void create();
+    void load();
+    void unload() {
+        glDeleteVertexArrays(1, &_VAO_ID);
+        glDeleteBuffers(1, &_VBO_ID);
+        glDeleteBuffers(1, &_EBO_ID);
+    }
     void render(float delta_time);
 };
 
 
-void Scene1::create() {
+void Scene1::load() {
 
     // Shaders
     _shader = new Shader("shaders/vert4.glsl", "shaders/frag4.glsl"); // texture shader

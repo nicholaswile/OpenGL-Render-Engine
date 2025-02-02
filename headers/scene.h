@@ -18,9 +18,10 @@
 #include <vector>
 
 class Scene {
-protected:
+public:
     virtual ~Scene() {};
-    virtual void create() {};
+    virtual void load() {};
+    virtual void unload() {};
     virtual void render(float delta_time) {};
 };
 

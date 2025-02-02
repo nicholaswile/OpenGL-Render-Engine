@@ -1,7 +1,13 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Compiles on Windows with `mingw32-make`. To create new scenes, add a scene header file in the scenes folder that extends the abstract scene base class. The new scene should implement a create function for creating objects such as textures, meshes, and shaders, as well as a custom render function. Then instantiate this scene in the main application file with the create function, and call the render function in the main game loop.
+An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Compiles on Windows with `mingw32-make`. 
 
-### Transformations
+### Creating custom scenes
+To create new scenes, add a scene header file in the scenes folder that extends the abstract scene base class. The new scene should implement a load function for creating and loading objects such as textures, meshes, and shaders; an unload function, and a custom render function. 
+
+#### Scene management and scene transitions
+Add this to the scene vector in the main application. To change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
+
+### (Scene 1) 3D Transformations
 <img src="images/OGL_3DCrates.gif">
 
 Support for 3D transformations with matrices and vectors.
@@ -11,17 +17,17 @@ Support for 3D transformations with matrices and vectors.
 
 The current code achieves around 2000 FPS on average, 1500 FPS in this screenshot with a typical frame time of less than 1 ms. This capture is taken using RenderDoc.
 
-### (Textures) A wild Sprigatito has appeared!~
+### (Scene 2) Textures Demo - A wild Sprigatito has appeared!~
 |100% Empty Box|Mix|100% Sprigatito|
 |:-------:|:--------:|:--------:|
-|<img src="images/empty.png" style="height: 300px">|<img src="images/half.png" style="height: 300px">|<img src="images/full.png" style="height: 300px">
+|<img src="images/empty.png" style="height: 30%">|<img src="images/half.png" style="height: 30%">|<img src="images/full.png" style="height: 30%">
 
-Support for texture mapping.
+Support for texture mapping. Press the `up` arrow key to shift the texture towards sprigatito, and `down` to shift towards the crate.
 
 ### (Shaders) Drawing triangles
 |Solid|Solid|Wireframe|
 |:---:|:----:|:------:|
-|<img src="images/interpolated_color.png" style="height: 300px">|<img src="images/filled.png" style="height: 300px">|<img src="images/wireframe.png" style="height: 300px">|
+|<img src="images/interpolated_color.png" style="height: 30%">|<img src="images/filled.png" style="height: 30%">|<img src="images/wireframe.png" style="height: 30%">|
 
 Support for shaders.
 
