@@ -10,7 +10,12 @@ Implement your GLSL shaders and add them to the shaders folder. To use them in y
 #### Scene management and scene transitions
 Push your new scene file to the scene vector in the scene manager header file. When playing the game, to change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
 
-### (Scene 1) 3D Transformations
+### Perspective Correction
+<img src="images/OGL_Perspective.gif"> 
+
+Shader now multiplies projection * view * model matrices, the view matrix corrects the perspective. 
+
+### 3D Transformations
 <img src="images/OGL_3DCrates.gif">
 
 Support for 3D transformations with matrices and vectors.
@@ -20,7 +25,7 @@ Support for 3D transformations with matrices and vectors.
 
 The current code achieves around 2000 FPS on average, 1500 FPS in this screenshot with a typical frame time of less than 1 ms. This capture is taken using RenderDoc.
 
-### (Scene 2) Textures Demo - A wild Sprigatito has appeared!~
+### Textures Demo - A wild Sprigatito has appeared!~
 |100% Empty Box|Mix|100% Sprigatito|
 |:-------:|:--------:|:--------:|
 |<img src="images/empty.png" style="height: 30%">|<img src="images/half.png" style="height: 30%">|<img src="images/full.png" style="height: 30%">

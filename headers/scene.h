@@ -4,6 +4,7 @@
 // Custom
 #include "shader.h"
 #include "texture.h"
+#include "config.h"
 
 // OpenGL
 #include <glad/glad.h>
@@ -14,6 +15,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // CPP
+#include <ctime>
+#include <cstdlib>
 #include <string>
 #include <vector>
 

@@ -1,0 +1,151 @@
+#include "../headers/scene3.h"
+
+void generate_axes();
+
+void Scene3::load() {
+
+    // Shaders
+    _shader = new Shader("shaders/vert5.glsl", "shaders/frag4.glsl"); // texture shader
+
+    // Create mesh (might make this a class later)
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    // Copy the vertex and index data onto the GPU
+    glGenBuffers(1, &_VBO_ID);                                                           // Vertex buffer object
+    glGenVertexArrays(1, &_VAO_ID);                                                      // Vertex attribute object (settings, configs OpenGL how to read the data in VBO)
+    glGenBuffers(1, &_EBO_ID);                                                           // Element buffer object tells OpenGL indices that make up each triangle
+
+    glBindVertexArray(_VAO_ID);
+    glBindBuffer(GL_ARRAY_BUFFER, _VBO_ID);                                              // Configure buffer array 
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);          // Copy data to buffer memory
+
+    // Tell OpenGL how to interpret vertex data
+    // Parameters: location=0 (set position in shader to 0), size of attribute=vec3 (3 values), type of data is vec* float, whether data should be normalized [0,1], stride (space between vertex attributes, 3 floats = 3*sizeof(float=32 bits) to get next vec3, offset of start of position data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0); // will give layout(location = 0) in shaders. 
+
+    // Create new vertex attribute for this texture
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1); // will give layout(location = 2) in shaders. 
+
+    // TEXTURES
+    unsigned int textures[2];
+    glGenTextures(2, textures);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+    Texture::CreateTexture("textures/container.jpg", GL_TEXTURE0, GL_TEXTURE_2D, 0, GL_RGB, GL_RGB, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    Texture::CreateTexture("textures/sprigatito.png", GL_TEXTURE1, GL_TEXTURE_2D, 0, GL_RGBA, GL_RGBA, GL_REPEAT, GL_REPEAT, GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
+
+    // Set uniform variables to appropriate texture
+    _shader->use();
+    glUniform1i(glGetUniformLocation(_shader->ID, "texture1"), 0); // Make sure each uniform sampler corresponds to correct texture unit
+    _shader->set_int("texture2", 1);
+
+    mixer = 0.5f;
+
+    srand(static_cast<unsigned int>(time(0)));
+
+    generate_axes();
+
+}
+
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
+};
+
+
+glm::vec3 cubeAxes[10];
+void generate_axes() {
+    for (int i = 0; i < 10; i++) 
+        cubeAxes[i] = glm::vec3(float(rand()%10)/10.0f, float(rand()%10)/10.0f, float(rand()%10)/10.0f);
+}
+
+
+void Scene3::render(float delta_time) {
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    _shader->use();
+    _shader->set_float("mixer", mixer); 
+    
+    // Transformation matrices
+    for (unsigned int i = 0; i < sizeof(cubePositions)/(3*sizeof(float)); i++) {
+        glm::mat4 model = glm::mat4(1.0f); 
+        model = glm::translate(model, cubePositions[i]);
+        float angle = (float)delta_time / 1000;
+        angle *= 0.5 * (i+1);
+        model = glm::rotate(model, angle, cubeAxes[i]);
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0, 0, -3.0f));
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), (float)WIDTH/HEIGHT, 0.1f, 100.f);
+
+        unsigned int model_loc = glGetUniformLocation(_shader->ID, "model"); 
+        unsigned int view_loc = glGetUniformLocation(_shader->ID, "view"); 
+        unsigned int proj_loc = glGetUniformLocation(_shader->ID, "projection"); 
+        
+        glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view)); 
+        glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection)); 
+        glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model)); 
+
+        glBindVertexArray(_VAO_ID);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+}

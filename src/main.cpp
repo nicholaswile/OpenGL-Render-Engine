@@ -1,14 +1,15 @@
 #include "../headers/scenemanager.h"
+#include "../headers/config.h"
 
 // SDL
 #include <SDL.h>
 
-const char* TITLE = "NikoGL";
-const int WIDTH = 1920, HEIGHT = 1080;
-
 void err_msg(const char* msg);
 void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
+
+char* TITLE = "NikoGL";
+int WIDTH = 1920, HEIGHT = 1080;
 
 int main(int argc, char* argv[])
 {
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
     glEnable(GL_DEPTH_TEST);  
 
     // Note: Want to send as much data to GPU at once as possible for speed, because CPU --> GPU is slow. Use buffer to store data in memory for GPU
-    
+
     SceneManager::init();
     
     // Main game loop
