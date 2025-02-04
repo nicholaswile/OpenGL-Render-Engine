@@ -80,13 +80,11 @@ void Scene2::render(float delta_time) {
 }
 
 void Scene2::process_input(SDL_Event &event) {
-    std::cout << "Scene2::Process_Input()\n";
-    
     if (event.type != SDL_KEYDOWN) return;
 
     switch (event.key.keysym.sym) {
         case SDLK_UP:           if (mixer+0.01f < 1.0f) mixer += 0.01f; break; 
         case SDLK_DOWN:         if (mixer-0.01f > 0.0f) mixer -= 0.01f; break;
     }  
-    
+
 }

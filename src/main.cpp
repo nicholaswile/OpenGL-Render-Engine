@@ -92,6 +92,7 @@ void process_input(SDL_Window *window)
         }  
         
         SceneManager::process_input(event);
+
     }
 
 }

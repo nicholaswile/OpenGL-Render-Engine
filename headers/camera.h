@@ -30,7 +30,8 @@ public:
 
     inline glm::vec3 camDirection() {return glm::normalize(_position - _target);}
     inline glm::vec3 camRight() {return glm::normalize(glm::cross(_up, camDirection()));}
-    glm::vec3 camUp() {return glm::normalize(glm::cross(camDirection(), camRight()));}
+    inline glm::vec3 camUp() {return glm::normalize(glm::cross(camDirection(), camRight()));}
+    inline glm::vec3 camFront() {return -camDirection();}
 
     inline glm::mat4 lookAt() {return glm::lookAt(_position, _target, _up);}
 

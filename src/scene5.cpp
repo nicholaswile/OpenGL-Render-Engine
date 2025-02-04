@@ -102,7 +102,12 @@ void Scene5::load() {
     _cube_positions[8] = glm::vec3( 1.5f,  0.2f, -1.5f);
     _cube_positions[9] = glm::vec3(-1.3f,  1.0f, -1.5f);          
 
-    _cam = new Camera();
+    glm::vec3 cam_pos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cam_front= glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 target = cam_pos + cam_front;
+    glm::vec3 cam_up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    _cam = new Camera(cam_pos, target, cam_up);
 
 }
 
@@ -113,8 +118,6 @@ void Scene5::render(float delta_time) {
     _shader->use();
     _shader->set_float("mixer", mixer); 
 
-    const float radius = 10.0f;
-    
     // Transformation matrices
     for (unsigned int i = 0; i < sizeof(_cube_positions)/(3*sizeof(float)); i++) {
 
@@ -125,10 +128,7 @@ void Scene5::render(float delta_time) {
         float angle = 0.5 * (i+1) * timescaled;
         model = glm::rotate(model, angle, _cube_rotations[i]);
 
-        // View
-        float camx = sin(timescaled) * radius;
-        float camz = cos(timescaled) * radius;
-        _cam->set_position(glm::vec3(camx, 0.0f, camz));
+        // View 
         glm::mat4 view = _cam->lookAt();
         
         // Perspective
@@ -149,5 +149,22 @@ void Scene5::render(float delta_time) {
 }
 
 void Scene5::process_input(SDL_Event &event) {
+    const float cam_speed = 0.05f;
+
+    if (event.type != SDL_KEYDOWN) return;
+
+    glm::vec3 new_pos = glm::vec3(0);
+    glm::vec3 cam_right = _cam->camRight();
+    glm::vec3 cam_front = _cam->camFront();
+
+    switch (event.key.keysym.sym) {
+        case SDLK_w: new_pos = _cam->get_position() + cam_speed * cam_front;            break; 
+        case SDLK_s: new_pos = _cam->get_position() - cam_speed * cam_front;            break;
+        case SDLK_a: new_pos = _cam->get_position() - cam_speed * cam_right;            break; 
+        case SDLK_d: new_pos = _cam->get_position() + cam_speed * cam_right;            break;
+    }  
+
+    _cam->set_position(new_pos);
+    _cam->set_target(new_pos+cam_front);
 
 }
