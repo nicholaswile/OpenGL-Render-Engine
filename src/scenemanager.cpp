@@ -8,6 +8,8 @@ void SceneManager::init() {
     scenes.push_back(new Scene2());
     scenes.push_back(new Scene3());
     scenes.push_back(new Scene4());
+    scenes.push_back(new Scene5());
+    
     current_scene = scenes.size()-1;
     scenes[current_scene]->load();
 }

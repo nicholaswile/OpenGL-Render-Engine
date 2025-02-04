@@ -7,6 +7,7 @@
 #include "scene2.h"
 #include "scene3.h"
 #include "scene4.h"
+#include "scene5.h"
 
 class SceneManager {
 private:
