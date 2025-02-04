@@ -10,6 +10,11 @@ private:
     unsigned int _VAO_ID;
     unsigned int _VBO_ID;
     unsigned int _EBO_ID;
+
+    // Scene specific
+    glm::vec3 cube_positions [10];
+    glm::vec3 cube_rotations [10];
+
 public:
     float mixer;
     Scene3() {}

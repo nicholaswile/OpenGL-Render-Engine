@@ -1,12 +1,14 @@
 #include "../headers/scenemanager.h"
 
 std::vector<Scene*> SceneManager::scenes = std::vector<Scene*>();
-int SceneManager::current_scene = 2;
+int SceneManager::current_scene = 0;
 
 void SceneManager::init() {
     scenes.push_back(new Scene1());
     scenes.push_back(new Scene2());
     scenes.push_back(new Scene3());
+    scenes.push_back(new Scene4());
+    current_scene = scenes.size()-1;
     scenes[current_scene]->load();
 }
 

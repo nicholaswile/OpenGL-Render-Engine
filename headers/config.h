@@ -1,7 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-extern char* TITLE;
+#include <string>
+extern std::string TITLE;
 extern int WIDTH, HEIGHT;
 
 #endif

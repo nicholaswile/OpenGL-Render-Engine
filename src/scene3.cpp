@@ -1,7 +1,5 @@
 #include "../headers/scene3.h"
 
-void generate_axes();
-
 void Scene3::load() {
 
     // Shaders
@@ -91,28 +89,20 @@ void Scene3::load() {
 
     srand(static_cast<unsigned int>(time(0)));
 
-    generate_axes();
-
-}
-
-glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f), 
-    glm::vec3( 2.0f,  5.0f, -15.0f), 
-    glm::vec3(-1.5f, -2.2f, -2.5f),  
-    glm::vec3(-3.8f, -2.0f, -12.3f),  
-    glm::vec3( 2.4f, -0.4f, -3.5f),  
-    glm::vec3(-1.7f,  3.0f, -7.5f),  
-    glm::vec3( 1.3f, -2.0f, -2.5f),  
-    glm::vec3( 1.5f,  2.0f, -2.5f), 
-    glm::vec3( 1.5f,  0.2f, -1.5f), 
-    glm::vec3(-1.3f,  1.0f, -1.5f)  
-};
-
-
-glm::vec3 cubeAxes[10];
-void generate_axes() {
     for (int i = 0; i < 10; i++) 
-        cubeAxes[i] = glm::vec3(float(rand()%10)/10.0f, float(rand()%10)/10.0f, float(rand()%10)/10.0f);
+        cube_rotations[i] = glm::vec3(float(rand()%10)/10.0f, float(rand()%10)/10.0f, float(rand()%10)/10.0f);
+
+    cube_positions[0] = glm::vec3( 0.0f,  0.0f,  0.0f);
+    cube_positions[1] = glm::vec3( 2.0f,  5.0f, -15.0f);
+    cube_positions[2] = glm::vec3(-1.5f, -2.2f, -2.5f);
+    cube_positions[3] = glm::vec3(-3.8f, -2.0f, -12.3f);
+    cube_positions[4] = glm::vec3( 2.4f, -0.4f, -3.5f);
+    cube_positions[5] = glm::vec3(-1.7f,  3.0f, -7.5f);
+    cube_positions[6] = glm::vec3( 1.3f, -2.0f, -2.5f);
+    cube_positions[7] = glm::vec3( 1.5f,  2.0f, -2.5f);
+    cube_positions[8] = glm::vec3( 1.5f,  0.2f, -1.5f);
+    cube_positions[9] = glm::vec3(-1.3f,  1.0f, -1.5f);          
+
 }
 
 
@@ -124,12 +114,12 @@ void Scene3::render(float delta_time) {
     _shader->set_float("mixer", mixer); 
     
     // Transformation matrices
-    for (unsigned int i = 0; i < sizeof(cubePositions)/(3*sizeof(float)); i++) {
+    for (unsigned int i = 0; i < sizeof(cube_positions)/(3*sizeof(float)); i++) {
         glm::mat4 model = glm::mat4(1.0f); 
-        model = glm::translate(model, cubePositions[i]);
+        model = glm::translate(model, cube_positions[i]);
         float angle = (float)delta_time / 1000;
         angle *= 0.5 * (i+1);
-        model = glm::rotate(model, angle, cubeAxes[i]);
+        model = glm::rotate(model, angle, cube_rotations[i]);
 
         glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0, 0, -3.0f));

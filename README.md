@@ -10,10 +10,20 @@ Implement your GLSL shaders and add them to the shaders folder. To use them in y
 #### Scene management and scene transitions
 Push your new scene file to the scene vector in the scene manager header file. When playing the game, to change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
 
+### Rotating Camera
+<img src="images/OGL_RotatingCamera.gif">
+
+Camera class implemented. User can customize the position, target, and up-direction. 
+
+#### Performance on many cubes
+<img src="images/perfMany.png">
+
+The current code achieves around 2000 FPS on average, 1500 FPS in this screenshot with a typical frame time of less than 1 ms. The same as just one single cube. This capture is taken using RenderDoc.
+
 ### Perspective Correction
 <img src="images/OGL_Perspective.gif"> 
 
-Shader now multiplies projection * view * model matrices, the view matrix corrects the perspective. 
+Shader now multiplies `projection * view * model` matrices, the view matrix corrects the perspective. 
 
 ### 3D Transformations
 <img src="images/OGL_3DCrates.gif">
