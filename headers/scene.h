@@ -14,6 +14,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// SDL
+#include <SDL.h>
+
 // CPP
 #include <ctime>
 #include <cstdlib>
@@ -26,6 +29,7 @@ public:
     virtual void load() {};
     virtual void unload() {};
     virtual void render(float delta_time) {};
+    virtual void process_input(SDL_Event &event) {};
 };
 
 #endif

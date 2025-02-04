@@ -25,6 +25,7 @@ public:
         glDeleteBuffers(1, &_EBO_ID);
     }
     void render(float delta_time);
+    void process_input(SDL_Event &event);
 };
 
 #endif

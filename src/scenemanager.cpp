@@ -21,3 +21,7 @@ void SceneManager::load_next() {
 void SceneManager::render(float deltatime) {
     scenes[current_scene]->render(deltatime);
 }
+
+void SceneManager::process_input(SDL_Event &event) {
+    scenes[current_scene]->process_input(event);
+}

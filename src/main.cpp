@@ -1,9 +1,6 @@
 #include "../headers/scenemanager.h"
 #include "../headers/config.h"
 
-// SDL
-#include <SDL.h>
-
 void err_msg(const char* msg);
 void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
@@ -87,14 +84,18 @@ void process_input(SDL_Window *window)
         if (event.type != SDL_KEYDOWN) return;
 
         switch (event.key.keysym.sym) {
+            // General
             case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                        break;
             case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);              break;  // Wireframe
             case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
-
-            // Eventually i'll make a seperate input class and handle input differently depending on scene
-            case SDLK_UP:           if (Scene2::mixer+0.01f < 1.0f) Scene2::mixer += 0.01f; break; 
-            case SDLK_DOWN:         if (Scene2::mixer-0.01f > 0.0f) Scene2::mixer -= 0.01f; break;
-            case SDLK_RIGHT:        SceneManager::load_next();                              break;
+            case SDLK_RIGHT:        SceneManager::load_next();                              break;            
         }  
+        
+        SceneManager::process_input(event);
     }
+
+}
+
+void process_key(int i) {
+
 }

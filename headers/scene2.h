@@ -26,6 +26,7 @@ public:
         mixer = 0.5f; // Otherwise persists across scenes, which is cool but not what I want
     }
     void render(float delta_time);
+    void process_input(SDL_Event &event);
 };
 
 #endif
