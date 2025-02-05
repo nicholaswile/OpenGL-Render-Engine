@@ -148,19 +148,24 @@ void Scene5::render(float delta_time) {
 
 }
 
-void Scene5::process_input(SDL_Event &event) {
-    const float cam_speed = 0.05f;
-
-    if (event.type != SDL_KEYDOWN) return;
+void Scene5::process_input(SDL_Event &event, float delta_time) {
 
     glm::vec3 new_pos = _cam->position;
+    const float cam_speed = .15f*(delta_time+1);
 
-    switch (event.key.keysym.sym) {
-        case SDLK_w: new_pos = _cam->position + cam_speed * _cam->direction;            break; 
-        case SDLK_s: new_pos = _cam->position - cam_speed * _cam->direction;            break;
-        case SDLK_a: new_pos = _cam->position - cam_speed * _cam->camRight();           break; 
-        case SDLK_d: new_pos = _cam->position + cam_speed * _cam->camRight();           break;
-    }  
+    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    if (keystate[SDL_SCANCODE_W]) {
+        new_pos = _cam->position + cam_speed * _cam->direction;
+    }
+    if (keystate[SDL_SCANCODE_S]) {
+        new_pos = _cam->position - cam_speed * _cam->direction;
+    }
+    if (keystate[SDL_SCANCODE_A]) {
+        new_pos = _cam->position - cam_speed * _cam->camRight(); 
+    }
+    if (keystate[SDL_SCANCODE_D]) {
+        new_pos = _cam->position + cam_speed * _cam->camRight();  
+    }
 
     _cam->position = new_pos;
 }

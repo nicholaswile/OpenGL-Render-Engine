@@ -140,6 +140,6 @@ void Scene3::render(float delta_time) {
     }
 }
 
-void Scene3::process_input(SDL_Event &event) {
+void Scene3::process_input(SDL_Event &event, float delta_time) {
 
 }

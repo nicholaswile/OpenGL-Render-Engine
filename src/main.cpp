@@ -12,6 +12,7 @@ int WIDTH = 1920, HEIGHT = 1080;
 float previous_time = 0.0f;
 float current_time = 0.0f;
 float delta_time = 0.0f;
+float frame_limit = 1000.0f/60.f;
 
 int main(int argc, char* argv[])
 {
@@ -59,9 +60,10 @@ int main(int argc, char* argv[])
     // Main game loop
     while (!SDL_GL_WindowShouldClose) {
 
+        current_time = static_cast<float>(SDL_GetTicks());
+        std::cout << current_time << "\n";
+        delta_time = (current_time-previous_time);
         previous_time = current_time;
-        current_time = SDL_GetTicks();
-        delta_time = current_time-previous_time;
         
         // Input
         process_input(window);
@@ -71,6 +73,10 @@ int main(int argc, char* argv[])
 
         // Display
         SDL_GL_SwapWindow(window);
+
+        // if (delta_time < frame_limit) {
+        //     SDL_Delay(frame_limit-delta_time);
+        // }
     }
 
     SDL_GL_DeleteContext(glContext);
@@ -88,6 +94,7 @@ void err_msg(const char* msg) {
 void process_input(SDL_Window *window)
 {
     SDL_Event event;
+
     if (SDL_PollEvent(&event)) {
         SDL_GL_WindowShouldClose = (event.type == SDL_QUIT);
 
@@ -101,12 +108,7 @@ void process_input(SDL_Window *window)
             case SDLK_RIGHT:        SceneManager::load_next();                              break;            
         }  
         
-        SceneManager::process_input(event);
-
+        SceneManager::process_input(event, delta_time);
     }
-
-}
-
-void process_key(int i) {
 
 }

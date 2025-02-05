@@ -148,6 +148,6 @@ void Scene4::render(float delta_time) {
     }
 }
 
-void Scene4::process_input(SDL_Event &event) {
+void Scene4::process_input(SDL_Event &event, float delta_time) {
 
 }

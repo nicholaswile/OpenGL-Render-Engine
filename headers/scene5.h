@@ -34,9 +34,9 @@ public:
         glDeleteBuffers(1, &_EBO_ID);
         _cam->reset();
     }
-    
+
     void render(float delta_time);
-    void process_input(SDL_Event &event);
+    void process_input(SDL_Event &event, float delta_time);
 };
 
 #endif

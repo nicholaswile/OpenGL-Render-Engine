@@ -29,7 +29,7 @@ public:
     virtual void load() {};
     virtual void unload() {};
     virtual void render(float delta_time) {};
-    virtual void process_input(SDL_Event &event) {};
+    virtual void process_input(SDL_Event &event, float delta_time) {};
 };
 
 #endif

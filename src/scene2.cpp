@@ -79,7 +79,7 @@ void Scene2::render(float delta_time) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void Scene2::process_input(SDL_Event &event) {
+void Scene2::process_input(SDL_Event &event, float delta_time) {
     if (event.type != SDL_KEYDOWN) return;
 
     switch (event.key.keysym.sym) {
