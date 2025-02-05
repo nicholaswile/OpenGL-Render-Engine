@@ -17,6 +17,10 @@ public:
     glm::vec3 direction;
     glm::vec3 up;
 
+    float pitch; 
+    float yaw;
+    float roll;
+
     Camera(glm::vec3 position=glm::vec3(0, 0, 3.0f), glm::vec3 direction=glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3 up=glm::vec3(0.0f, 1.0f, 0.0f)) {
         this->position = position;
         _initialPos = position;
@@ -24,6 +28,11 @@ public:
         _initialDir = direction;
         this->up = up;
         _initialUp = up;
+
+        pitch = 0.f;
+        yaw = -90.f;
+        roll = 0.f;
+
     }
 
     inline glm::vec3 camRight() {return glm::normalize(glm::cross(direction, up));}

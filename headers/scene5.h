@@ -17,6 +17,8 @@ private:
     glm::vec3 _cube_rotations [10];
 
     Camera* _cam;
+    int _prevMouseX = -1;
+    int _prevMouseY = -1;
 
 public:
     float mixer;
@@ -33,6 +35,8 @@ public:
         glDeleteBuffers(1, &_VBO_ID);
         glDeleteBuffers(1, &_EBO_ID);
         _cam->reset();
+        _prevMouseX = WIDTH/2;
+        _prevMouseY = HEIGHT/2;
     }
 
     void render(float delta_time);

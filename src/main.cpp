@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
     while (!SDL_GL_WindowShouldClose) {
 
         current_time = static_cast<float>(SDL_GetTicks());
-        std::cout << current_time << "\n";
         delta_time = (current_time-previous_time);
         previous_time = current_time;
         
@@ -107,8 +106,8 @@ void process_input(SDL_Window *window)
             case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
             case SDLK_RIGHT:        SceneManager::load_next();                              break;            
         }  
-        
-        SceneManager::process_input(event, delta_time);
     }
+
+    SceneManager::process_input(event, delta_time);
 
 }
