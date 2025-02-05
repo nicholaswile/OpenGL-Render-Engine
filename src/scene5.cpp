@@ -104,10 +104,8 @@ void Scene5::load() {
 
     glm::vec3 cam_pos = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 cam_front= glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 target = cam_pos + cam_front;
     glm::vec3 cam_up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    _cam = new Camera(cam_pos, target, cam_up);
+    _cam = new Camera(cam_pos, cam_front, cam_up);
 
 }
 
@@ -129,7 +127,7 @@ void Scene5::render(float delta_time) {
         model = glm::rotate(model, angle, _cube_rotations[i]);
 
         // View 
-        glm::mat4 view = _cam->lookAt();
+        glm::mat4 view = _cam->lookAt(_cam->_position + _cam->_direction);
         
         // Perspective
         glm::mat4 projection;
@@ -148,23 +146,20 @@ void Scene5::render(float delta_time) {
     }
 }
 
+// TODO: refactor camera class
 void Scene5::process_input(SDL_Event &event) {
     const float cam_speed = 0.05f;
 
     if (event.type != SDL_KEYDOWN) return;
 
     glm::vec3 new_pos = glm::vec3(0);
-    glm::vec3 cam_right = _cam->camRight();
-    glm::vec3 cam_front = _cam->camFront();
 
     switch (event.key.keysym.sym) {
-        case SDLK_w: new_pos = _cam->get_position() + cam_speed * cam_front;            break; 
-        case SDLK_s: new_pos = _cam->get_position() - cam_speed * cam_front;            break;
-        case SDLK_a: new_pos = _cam->get_position() - cam_speed * cam_right;            break; 
-        case SDLK_d: new_pos = _cam->get_position() + cam_speed * cam_right;            break;
+        case SDLK_w: new_pos = _cam->_position + cam_speed * _cam->_direction;            break; 
+        case SDLK_s: new_pos = _cam->_position - cam_speed * _cam->_direction;            break;
+        case SDLK_a: new_pos = _cam->_position - cam_speed * _cam->camRight();            break; 
+        case SDLK_d: new_pos = _cam->_position + cam_speed * _cam->camRight();            break;
     }  
 
-    _cam->set_position(new_pos);
-    _cam->set_target(new_pos+cam_front);
-
+    _cam->_position = new_pos;
 }

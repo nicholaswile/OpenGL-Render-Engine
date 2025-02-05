@@ -128,8 +128,8 @@ void Scene4::render(float delta_time) {
         // View
         float camx = sin(timescaled) * radius;
         float camz = cos(timescaled) * radius;
-        _cam->set_position(glm::vec3(camx, 0.0f, camz));
-        glm::mat4 view = _cam->lookAt();
+        _cam->_position = glm::vec3(camx, 0.0f, camz);
+        glm::mat4 view = _cam->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         
         // Perspective
         glm::mat4 projection;
