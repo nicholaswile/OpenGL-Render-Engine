@@ -152,8 +152,8 @@ void Scene5::render(float delta_time) {
 void Scene5::process_input(SDL_Event &event, float delta_time) {
 
     glm::vec3 new_pos = _cam->position;
-    const float cam_speed = .15f*(delta_time);
-    const float sensitivity = 0.5f;
+    const float cam_speed = .01f*(delta_time);
+    const float sensitivity = 0.25f;
 
     // Walk around
     const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -172,11 +172,12 @@ void Scene5::process_input(SDL_Event &event, float delta_time) {
 
     _cam->position = new_pos;
 
-    // Look around
+    // Look around 
     int currentMouseX, currentMouseY;
     SDL_GetMouseState(&currentMouseX, &currentMouseY);
     int offsetMouseX = currentMouseX - _prevMouseX;
     int offsetMouseY = _prevMouseY - currentMouseY;
+
     _prevMouseX = currentMouseX;
     _prevMouseY = currentMouseY;
     offsetMouseX *= sensitivity;
@@ -191,10 +192,10 @@ void Scene5::process_input(SDL_Event &event, float delta_time) {
         _cam->pitch = -89.f;
 
     _cam->yaw = glm::mod(_cam->yaw + offsetMouseX, 360.f);
-
+    
     glm::vec3 direction;
     direction.x = glm::cos(glm::radians(_cam->yaw)) * glm::cos(glm::radians(_cam->pitch));
-    direction.y = glm::sin(glm::radians(_cam->yaw));
+    direction.y = glm::sin(glm::radians(_cam->pitch));
     direction.z = glm::sin(glm::radians(_cam->yaw)) * glm::cos(glm::radians(_cam->pitch));
 
     _cam->direction = glm::normalize(direction);

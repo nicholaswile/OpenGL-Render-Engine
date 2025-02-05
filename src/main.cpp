@@ -104,7 +104,9 @@ void process_input(SDL_Window *window)
             case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                        break;
             case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);              break;  // Wireframe
             case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
-            case SDLK_RIGHT:        SceneManager::load_next();                              break;            
+            case SDLK_RIGHT:        SceneManager::load_next();                              break;      
+            case SDLK_TAB:          SDL_ShowCursor(SDL_DISABLE);                            break;
+      
         }  
     }
 
