@@ -1,24 +1,28 @@
 # OpenGL-Renderer
 An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Compiles on Windows with `mingw32-make`. 
 
-### Creating custom scenes
-To create new scenes, add a scene header file in the scenes folder that extends the abstract scene base class. The new scene should implement a load function for creating and loading objects such as textures, meshes, and shaders; an unload function, and a custom render function. 
+## Scenes
 
-#### Creating and using custom shaders
-Implement your GLSL shaders and add them to the shaders folder. To use them in your scene, load them using the shader object. 
+### FPS Camera
+<img src="images/OGL_FPS.gif">
 
-#### Scene management and scene transitions
-Push your new scene file to the scene vector in the scene manager header file. When playing the game, to change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
+#### Performance
+Framerate captured with RenderDoc. The performance stabilizes around 2000 FPS. Typical frame time is less than 1 millisecond.
+
+#### Controls
+|Input|Action|
+|:---|:---|
+|`W`|Forward|
+|`S`|Back|
+|`A`|Left|
+|`D`|Right|
+|`Mouse`|Look around|
+|`Scroll wheel`|Zoom in/out|
 
 ### Rotating Camera
 <img src="images/OGL_RotatingCamera.gif">
 
 Camera class implemented. User can customize the position, target, and up-direction. 
-
-#### Performance on many cubes
-<img src="images/perfMany.png">
-
-The current code achieves around 2000 FPS on average, 1500 FPS in this screenshot with a typical frame time of less than 1 ms. The same as just one single cube. This capture is taken using RenderDoc.
 
 ### Perspective Correction
 <img src="images/OGL_Perspective.gif"> 
@@ -30,11 +34,6 @@ Shader now multiplies `projection * view * model` matrices, the view matrix corr
 
 Support for 3D transformations with matrices and vectors.
 
-#### Current performance
-<img src="images/renderDoc.png">
-
-The current code achieves around 2000 FPS on average, 1500 FPS in this screenshot with a typical frame time of less than 1 ms. This capture is taken using RenderDoc.
-
 ### Textures Demo - A wild Sprigatito has appeared!~
 |100% Empty Box|Mix|100% Sprigatito|
 |:-------:|:--------:|:--------:|
@@ -42,12 +41,22 @@ The current code achieves around 2000 FPS on average, 1500 FPS in this screensho
 
 Support for texture mapping. Press the `up` arrow key to shift the texture towards sprigatito, and `down` to shift towards the crate.
 
+## Creating custom scenes
+To create new scenes, add a scene header file in the scenes folder that extends the abstract scene base class. Then create a CPP file for your scene implementing the virtual functions with your custom logic. 
+
+### Creating and using custom shaders
+Add custom GLSL shaders to the shader folder. To use them in your scene, load them in your scene file using the shader object. 
+
+### Scene management and scene transitions
+Push your new scene file to the scene vector in the scene manager header file. When playing the game, to change scenes, press the `right` arrow key. So far, there are no observable performance drops through RenderDoc when transitioning between scenes.
+
+<!--
 ### (Shaders) Drawing triangles
 |Solid|Solid|Wireframe|
 |:---:|:----:|:------:|
 |<img src="images/interpolated_color.png" style="height: 30%">|<img src="images/filled.png" style="height: 30%">|<img src="images/wireframe.png" style="height: 30%">|
-
 Support for shaders.
+-->
 
 <!-- 
 For future reference: the VBO stores the vertices, the EBO stores the vertex indices for each triangle, and the VAO specifies the settings for OpenGL to draw the triangles.

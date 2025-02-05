@@ -105,7 +105,10 @@ void Scene5::load() {
     glm::vec3 cam_pos = glm::vec3(0.0f, 0.0f, 3.0f);
     glm::vec3 cam_front= glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 cam_up = glm::vec3(0.0f, 1.0f, 0.0f);
-    _cam = new Camera(cam_pos, cam_front, cam_up);
+    float fov = 45.0f;
+    float near_plane = .1f;
+    float far_plane = 100.f;
+    _cam = new Camera(cam_pos, cam_front, cam_up, fov, near_plane, far_plane);
 
     SDL_GetMouseState(&_prevMouseX, &_prevMouseY);
 
@@ -129,11 +132,11 @@ void Scene5::render(float delta_time) {
         model = glm::rotate(model, angle, _cube_rotations[i]);
 
         // View 
-        glm::mat4 view = _cam->lookAt(_cam->position + _cam->direction);
+        glm::mat4 view = _cam->getViewMatrix();
         
         // Perspective
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), (float)WIDTH/HEIGHT, 0.1f, 100.f);
+        projection = _cam->getPerspectiveMatrix();
 
         unsigned int model_loc = glGetUniformLocation(_shader->ID, "model"); 
         unsigned int view_loc = glGetUniformLocation(_shader->ID, "view"); 
@@ -199,4 +202,13 @@ void Scene5::process_input(SDL_Event &event, float delta_time) {
     direction.z = glm::sin(glm::radians(_cam->yaw)) * glm::cos(glm::radians(_cam->pitch));
 
     _cam->direction = glm::normalize(direction);
+    
+    // Zoom in
+    float fov = _cam->fov;
+    if (event.type == SDL_MOUSEWHEEL) {
+        fov -= event.wheel.y;
+        if (fov < 1) fov = 1;
+        else if (fov > 45) fov = 45;
+    }
+    _cam->fov = fov;
 }

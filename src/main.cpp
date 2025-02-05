@@ -6,7 +6,8 @@ void process_input(SDL_Window *window);
 bool SDL_GL_WindowShouldClose = false;
 
 std::string TITLE = "NikoGL";
-int WIDTH = 1920, HEIGHT = 1080;
+// Lowered resolution for screen recording on Windows
+int WIDTH = 1600, HEIGHT = 900;
 
 // Frame timing
 float previous_time = 0.0f;
@@ -97,17 +98,17 @@ void process_input(SDL_Window *window)
     if (SDL_PollEvent(&event)) {
         SDL_GL_WindowShouldClose = (event.type == SDL_QUIT);
 
-        if (event.type != SDL_KEYDOWN) return;
-
-        switch (event.key.keysym.sym) {
-            // General
-            case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                        break;
-            case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);              break;  // Wireframe
-            case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
-            case SDLK_RIGHT:        SceneManager::load_next();                              break;      
-            case SDLK_TAB:          SDL_ShowCursor(SDL_DISABLE);                            break;
-      
-        }  
+        if (event.type == SDL_KEYDOWN) {
+            switch (event.key.keysym.sym) {
+                // General
+                case SDLK_ESCAPE:       SDL_GL_WindowShouldClose = true;                        break;
+                case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);              break;  // Wireframe
+                case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);              break;  // Polygon
+                case SDLK_RIGHT:        SceneManager::load_next();                              break;      
+                case SDLK_TAB:          SDL_ShowCursor(SDL_DISABLE);                            break;
+        
+            }  
+        }
     }
 
     SceneManager::process_input(event, delta_time);
