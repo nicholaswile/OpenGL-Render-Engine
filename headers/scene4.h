@@ -32,6 +32,7 @@ public:
         glDeleteBuffers(1, &_VBO_ID);
         glDeleteBuffers(1, &_EBO_ID);
         mixer = 0.5f; // Otherwise persists across scenes, which is cool but not what I want
+        _cam->reset();
     }
     void render(float delta_time);
     void process_input(SDL_Event &event);

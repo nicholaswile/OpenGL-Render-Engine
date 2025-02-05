@@ -100,7 +100,7 @@ void Scene1::render(float delta_time) {
     // Order, right to left: scale <-- rotate => left to right: rotate * scale
     glm::mat4 transform = glm::mat4(1.0f); // First create an identity matrix with w=1 (homogeneous coord) for scaling
     transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-    transform = glm::rotate(transform, (delta_time)/1000.0f, glm::vec3(1, 1, 1));
+    transform = glm::rotate(transform, (float)SDL_GetTicks()/1000.0f, glm::vec3(1, 1, 1));
     transform = glm::scale(transform, glm::vec3(.5, .5, .5));  
 
     unsigned int transformLoc = glGetUniformLocation(_shader->ID, "transform"); 
@@ -112,7 +112,7 @@ void Scene1::render(float delta_time) {
 
     glm::mat4 transform2 = glm::mat4(1.0f); // First create an identity matrix with w=1 (homogeneous coord) for scaling
     transform2 = glm::translate(transform2, glm::vec3(-0.5f, 0.5f, 0.0f));
-    transform2 = glm::rotate(transform2, delta_time/1000.0f, glm::vec3(-1, -1, -1));
+    transform2 = glm::rotate(transform2, (float)SDL_GetTicks()/1000.0f, glm::vec3(-1, -1, -1));
     transform2 = glm::scale(transform2, glm::vec3(.75, .75, .75));  
 
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform2));

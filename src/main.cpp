@@ -8,6 +8,11 @@ bool SDL_GL_WindowShouldClose = false;
 std::string TITLE = "NikoGL";
 int WIDTH = 1920, HEIGHT = 1080;
 
+// Frame timing
+float previous_time = 0.0f;
+float current_time = 0.0f;
+float delta_time = 0.0f;
+
 int main(int argc, char* argv[])
 {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -53,11 +58,16 @@ int main(int argc, char* argv[])
     
     // Main game loop
     while (!SDL_GL_WindowShouldClose) {
+
+        previous_time = current_time;
+        current_time = SDL_GetTicks();
+        delta_time = current_time-previous_time;
+        
         // Input
         process_input(window);
 
         // Rendering
-        SceneManager::render((float)SDL_GetTicks());
+        SceneManager::render(delta_time);
 
         // Display
         SDL_GL_SwapWindow(window);

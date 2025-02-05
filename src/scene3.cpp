@@ -117,7 +117,7 @@ void Scene3::render(float delta_time) {
     for (unsigned int i = 0; i < sizeof(cube_positions)/(3*sizeof(float)); i++) {
         glm::mat4 model = glm::mat4(1.0f); 
         model = glm::translate(model, cube_positions[i]);
-        float angle = (float)delta_time / 1000;
+        float angle = (float)SDL_GetTicks() / 1000.0f;
         angle *= 0.5 * (i+1);
         model = glm::rotate(model, angle, cube_rotations[i]);
 

@@ -107,6 +107,7 @@ void Scene5::load() {
     glm::vec3 cam_up = glm::vec3(0.0f, 1.0f, 0.0f);
     _cam = new Camera(cam_pos, cam_front, cam_up);
 
+
 }
 
 void Scene5::render(float delta_time) {
@@ -122,12 +123,12 @@ void Scene5::render(float delta_time) {
         // Model
         glm::mat4 model = glm::mat4(1.0f); 
         model = glm::translate(model, _cube_positions[i]);
-        float timescaled = (float)delta_time / 1000;
+        float timescaled = (float)SDL_GetTicks()/1000.0f;
         float angle = 0.5 * (i+1) * timescaled;
         model = glm::rotate(model, angle, _cube_rotations[i]);
 
         // View 
-        glm::mat4 view = _cam->lookAt(_cam->_position + _cam->_direction);
+        glm::mat4 view = _cam->lookAt(_cam->position + _cam->direction);
         
         // Perspective
         glm::mat4 projection;
@@ -144,22 +145,22 @@ void Scene5::render(float delta_time) {
         glBindVertexArray(_VAO_ID);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
+
 }
 
-// TODO: refactor camera class
 void Scene5::process_input(SDL_Event &event) {
     const float cam_speed = 0.05f;
 
     if (event.type != SDL_KEYDOWN) return;
 
-    glm::vec3 new_pos = glm::vec3(0);
+    glm::vec3 new_pos = _cam->position;
 
     switch (event.key.keysym.sym) {
-        case SDLK_w: new_pos = _cam->_position + cam_speed * _cam->_direction;            break; 
-        case SDLK_s: new_pos = _cam->_position - cam_speed * _cam->_direction;            break;
-        case SDLK_a: new_pos = _cam->_position - cam_speed * _cam->camRight();            break; 
-        case SDLK_d: new_pos = _cam->_position + cam_speed * _cam->camRight();            break;
+        case SDLK_w: new_pos = _cam->position + cam_speed * _cam->direction;            break; 
+        case SDLK_s: new_pos = _cam->position - cam_speed * _cam->direction;            break;
+        case SDLK_a: new_pos = _cam->position - cam_speed * _cam->camRight();           break; 
+        case SDLK_d: new_pos = _cam->position + cam_speed * _cam->camRight();           break;
     }  
 
-    _cam->_position = new_pos;
+    _cam->position = new_pos;
 }

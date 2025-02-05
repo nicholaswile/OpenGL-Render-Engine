@@ -121,14 +121,14 @@ void Scene4::render(float delta_time) {
         // Model
         glm::mat4 model = glm::mat4(1.0f); 
         model = glm::translate(model, _cube_positions[i]);
-        float timescaled = (float)delta_time / 1000;
+        float timescaled = (float)SDL_GetTicks() / 1000.0f;
         float angle = 0.5 * (i+1) * timescaled;
         model = glm::rotate(model, angle, _cube_rotations[i]);
 
         // View
         float camx = sin(timescaled) * radius;
         float camz = cos(timescaled) * radius;
-        _cam->_position = glm::vec3(camx, 0.0f, camz);
+        _cam->position = glm::vec3(camx, 0.0f, camz);
         glm::mat4 view = _cam->lookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         
         // Perspective
