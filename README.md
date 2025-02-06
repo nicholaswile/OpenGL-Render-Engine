@@ -3,6 +3,11 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 
 ## Scenes
 
+### UI Editor
+<img src="images/OGL_Editor.gif">
+
+Integrates <a href="https://github.com/ocornut/imgui">Dear ImGui</a> for editing the scene without recompiling. 
+
 ### FPS Camera
 <img src="images/OGL_FPS.gif">
 
@@ -76,6 +81,9 @@ For future reference: the VBO stores the vertices, the EBO stores the vertex ind
 </li>
 <li>
 <a href="https://glm.g-truc.net/0.9.8/index.html">GLM</a> for vector and matrix data structures and operations.
+</li>
+<li>
+<a href="https://github.com/ocornut/imgui">Dear ImGui</a> for the user interface.
 </li>
 <!--
 <li>
