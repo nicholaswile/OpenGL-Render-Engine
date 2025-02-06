@@ -21,7 +21,7 @@ OPENGL_L := -L $(OPENGL_LIB)
 
 LIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lOpenGL32
 SRC_DIR := src
-SRCS := $(wildcard $(SRC_DIR)/*.cpp) $(GLAD_SRC)/glad.c
+SRCS := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/imgui/*.cpp) $(GLAD_SRC)/glad.c
 
 all:
 	$(CXX) $(CXX_FLAGS) $(SDL_I) $(OPENGL_I) $(SDL_L) -o main $(SRCS) $(LIBS)

@@ -115,7 +115,21 @@ void Scene5::load() {
 }
 
 void Scene5::render(float delta_time) {
-    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+
+    float background_color[4] = {0.15f, 0.15f, 0.15f, 1.0f};
+
+    // ImGui UI
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+    ImGui::ColorPicker4("Background color", background_color);
+
+    ImGui::Begin("NikoGL Editor");
+    ImGui::Text("Hello! My name is Nicho ~");
+    ImGui::End();
+    ImGui::Render();
+
+    glClearColor(background_color[0], background_color[1], background_color[2], background_color[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     _shader->use();
@@ -150,9 +164,12 @@ void Scene5::render(float delta_time) {
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }
 
 void Scene5::process_input(SDL_Event &event, float delta_time) {
+
 
     glm::vec3 new_pos = _cam->position;
     const float cam_speed = .01f*(delta_time);
