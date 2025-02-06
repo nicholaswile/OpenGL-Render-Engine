@@ -18,9 +18,9 @@
 #include <SDL.h>
 
 // Dear ImGui
-#include "../src/imgui/imgui.h"
-#include "../src/imgui/imgui_impl_sdl2.h"
-#include "../src/imgui/imgui_impl_opengl3.h"
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_opengl3.h"
 
 // CPP
 #include <ctime>
