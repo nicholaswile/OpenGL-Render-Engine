@@ -8,13 +8,23 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 
 Integrates <a href="https://github.com/ocornut/imgui">Dear ImGui</a> for editing the scene without recompiling. 
 
+#### UI Controls
+|Input|Action|
+|:---|:---|
+|`esc`|Quit|
+|`space`|Hide UI|
+|`tab`|Hide cursor (when UI is hidden)|
+|`right arrow`|Change scene|
+|`1`|Wireframe mode|
+|`2`|Polygon mode|
+
 ### FPS Camera
 <img src="images/OGL_FPS.gif">
 
 #### Performance
 Framerate captured with RenderDoc. The performance stabilizes around 2000 FPS. Typical frame time is less than 1 millisecond.
 
-#### Controls
+#### Movement Controls
 |Input|Action|
 |:---|:---|
 |`W`|Forward|
