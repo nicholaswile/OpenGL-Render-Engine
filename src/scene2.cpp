@@ -79,12 +79,21 @@ void Scene2::render(float delta_time) {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void Scene2::process_input(SDL_Event &event, float delta_time) {
-    if (event.type != SDL_KEYDOWN) return;
+void Scene2::process_input(SDL_Event &event, float delta_time, bool key_down) {
+    // if (event.type != SDL_KEYDOWN) return;
 
-    switch (event.key.keysym.sym) {
-        case SDLK_UP:           if (mixer+0.01f < 1.0f) mixer += 0.01f; break; 
-        case SDLK_DOWN:         if (mixer-0.01f > 0.0f) mixer -= 0.01f; break;
-    }  
+    // switch (event.key.keysym.sym) {
+    //     case SDLK_UP:           if (mixer+0.01f < 1.0f) mixer += 0.01f; break; 
+    //     case SDLK_DOWN:         if (mixer-0.01f > 0.0f) mixer -= 0.01f; break;
+    // }  
 
+    if (key_down) {
+        const Uint8* keystate = SDL_GetKeyboardState(NULL);
+        if (keystate[SDL_SCANCODE_UP]) {
+            if (mixer + 0.1f < 1.0f) mixer += 0.01f;
+        }
+        if (keystate[SDL_SCANCODE_DOWN]) {
+            if (mixer + 0.1f < 1.0f) mixer -= 0.01f;
+        }
+    }
 }

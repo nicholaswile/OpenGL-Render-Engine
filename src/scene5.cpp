@@ -115,7 +115,7 @@ void Scene5::load() {
 
 void Scene5::render(float delta_time) {
 
-    //glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+    glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     _shader->use();
@@ -149,8 +149,80 @@ void Scene5::render(float delta_time) {
         glBindVertexArray(_VAO_ID);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
+
+    if (render_ui)
+        display_ui();
+
 }
 
-void Scene5::process_input(SDL_Event &event, float delta_time) {
-    _fpsPlayer->process_input(event, delta_time);    
+void Scene5::process_input(SDL_Event &event, float delta_time, bool key_down) {
+    if (key_down) {
+        const Uint8* keystate = SDL_GetKeyboardState(NULL);
+        if (keystate[SDL_SCANCODE_SPACE]) {
+            render_ui = !render_ui;
+            if (!render_ui) {
+                _fpsPlayer->recenter_mouse();
+                SDL_ShowCursor(SDL_DISABLE);
+            }      
+        }
+    }
+
+    // Render input every frame that the game is unpaused
+    if (!render_ui)
+        _fpsPlayer->process_input(event, delta_time);    
+}
+
+void Scene5::display_ui() {
+     // Start the Dear ImGui frame
+    if (render_ui) {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+    }
+
+    if (render_ui) {
+
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
+
+        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+
+            ImGui::Begin("Hello, NikoGL!");                         
+
+            ImGui::Text("My name is Nicho ~");               
+            ImGui::Checkbox("Demo Window", &show_demo_window);      
+            ImGui::Checkbox("Another Window", &show_another_window);
+
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            
+            ImGui::ColorEdit3("Background color", (float*)&clear_color); 
+
+            if (ImGui::Button("Click Me"))
+                counter++;
+            ImGui::SameLine();
+            ImGui::Text("num clicks = %d", counter);
+
+            ImGui::Text("Performance average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+
+        // 3. Show another simple window.
+        if (show_another_window)
+        {
+            ImGui::Begin("Secondary window", &show_another_window);  
+            ImGui::Text("Hello from another window!");
+            if (ImGui::Button("Close Me"))
+                show_another_window = false;
+            ImGui::End();
+        }
+        
+        // Rendering
+        ImGui::Render();
+
+        if (render_ui)
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
 }

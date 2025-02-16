@@ -18,7 +18,7 @@ public:
     static void init(); 
     static void load_next();
     static void render(float deltatime);
-    static void process_input(SDL_Event &event, float delta_time);
+    static void process_input(SDL_Event &event, float delta_time, bool key_down);
 };
 
 

@@ -4,5 +4,6 @@
 #include <string>
 extern std::string TITLE;
 extern int WIDTH, HEIGHT;
+extern bool PAUSED;
 
 #endif

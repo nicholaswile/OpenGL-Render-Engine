@@ -24,6 +24,6 @@ void SceneManager::render(float deltatime) {
     scenes[current_scene]->render(deltatime);
 }
 
-void SceneManager::process_input(SDL_Event &event, float delta_time) {
-    scenes[current_scene]->process_input(event, delta_time);
+void SceneManager::process_input(SDL_Event &event, float delta_time, bool key_down) {
+    scenes[current_scene]->process_input(event, delta_time, key_down);
 }

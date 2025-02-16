@@ -139,7 +139,3 @@ void Scene3::render(float delta_time) {
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 }
-
-void Scene3::process_input(SDL_Event &event, float delta_time) {
-
-}

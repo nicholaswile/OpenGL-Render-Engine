@@ -14,6 +14,9 @@ public:
         SDL_GetMouseState(&_prevMouseX, &_prevMouseY);
     }
     void process_input(SDL_Event &event, float delta_time);
+    void recenter_mouse() {
+        SDL_GetMouseState(&_prevMouseX, &_prevMouseY);
+    }
     void reset() {
         _cam->reset();
         _prevMouseX = WIDTH/2;

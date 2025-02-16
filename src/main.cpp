@@ -3,14 +3,13 @@
 
 std::string TITLE = "NikoGL";
 // Lowered resolution for screen recording on Windows
-int WIDTH = 1600, HEIGHT = 900;
+int WIDTH = 1920, HEIGHT = 1080;
 
 float previous_time = 0.0f;
 float current_time = 0.0f;
 float delta_time = 0.0f;
 float frame_limit = 1000.0f/60.f;
 bool done = false;
-bool render_ui = true;
 
 void err_msg(const char* msg);
 void process_input(SDL_Window *window, ImGuiIO &io);
@@ -83,10 +82,7 @@ int main(int argc, char* argv[])
     ImGui_ImplSDL2_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+    SDL_ShowCursor(SDL_DISABLE);
 
     SceneManager::init();
 
@@ -99,62 +95,9 @@ int main(int argc, char* argv[])
 
         process_input(window, io);
 
-        // Start the Dear ImGui frame
-        if (render_ui) {
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplSDL2_NewFrame();
-            ImGui::NewFrame();
-        }
-
-        if (render_ui) {
-
-            // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-            if (show_demo_window)
-                ImGui::ShowDemoWindow(&show_demo_window);
-
-            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-            {
-                static float f = 0.0f;
-                static int counter = 0;
-
-                ImGui::Begin("Hello, NikoGL!");                         
-
-                ImGui::Text("My name is Nicho ~");               
-                ImGui::Checkbox("Demo Window", &show_demo_window);      
-                ImGui::Checkbox("Another Window", &show_another_window);
-
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            
-                ImGui::ColorEdit3("Background color", (float*)&clear_color); 
-
-                if (ImGui::Button("Click Me"))
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("num clicks = %d", counter);
-
-                ImGui::Text("Performance average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                ImGui::End();
-            }
-
-            // 3. Show another simple window.
-            if (show_another_window)
-            {
-                ImGui::Begin("Secondary window", &show_another_window);  
-                ImGui::Text("Hello from another window!");
-                if (ImGui::Button("Close Me"))
-                    show_another_window = false;
-                ImGui::End();
-            }
-
-            // Rendering
-            ImGui::Render();
-        }
         glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        
         SceneManager::render(delta_time);
-        if (render_ui)
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Display
         SDL_GL_SwapWindow(window);
@@ -180,7 +123,8 @@ void err_msg(const char* msg) {
 void process_input(SDL_Window *window, ImGuiIO &io)
 {
     SDL_Event event;
-    
+    bool key_down = false;
+
     while (SDL_PollEvent(&event))
     {
         ImGui_ImplSDL2_ProcessEvent(&event);
@@ -198,16 +142,16 @@ void process_input(SDL_Window *window, ImGuiIO &io)
             return;
         
         if (event.type != SDL_KEYDOWN) break;
+        key_down = true;
         switch (event.key.keysym.sym) {
             case SDLK_ESCAPE:       done = true;                                    break;
             case SDLK_1:            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);      break;
             case SDLK_2:            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);      break;
             case SDLK_RIGHT:        SceneManager::load_next();                      break;
-            case SDLK_TAB:          SDL_ShowCursor(SDL_DISABLE);                    break;
-            case SDLK_SPACE:        render_ui = !render_ui;                         break;
         }
     }
 
-    if (!io.WantCaptureKeyboard && !io.WantCaptureMouse && !render_ui)
-        SceneManager::process_input(event, delta_time);
+    if (!io.WantCaptureKeyboard && !io.WantCaptureMouse)
+        SceneManager::process_input(event, delta_time, key_down);
+
 }

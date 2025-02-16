@@ -35,7 +35,8 @@ public:
     virtual void load() {};
     virtual void unload() {};
     virtual void render(float delta_time) {};
-    virtual void process_input(SDL_Event &event, float delta_time) {};
+    virtual void display_ui() {};
+    virtual void process_input(SDL_Event &event, float delta_time, bool key_down) {};
 };
 
 #endif
