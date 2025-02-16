@@ -3,7 +3,7 @@
 
 // Custom
 #include "scene.h"
-#include "camera.h"
+#include "fpsplayer.h"
 
 class Scene5 : public Scene {
 private:
@@ -16,9 +16,8 @@ private:
     glm::vec3 _cube_positions [10];
     glm::vec3 _cube_rotations [10];
 
-    Camera* _cam;
-    int _prevMouseX = -1;
-    int _prevMouseY = -1;
+    // Camera* _cam;
+    FPSPlayer* _fpsPlayer;
 
 public:
     float mixer;
@@ -34,9 +33,7 @@ public:
         glDeleteVertexArrays(1, &_VAO_ID);
         glDeleteBuffers(1, &_VBO_ID);
         glDeleteBuffers(1, &_EBO_ID);
-        _cam->reset();
-        _prevMouseX = WIDTH/2;
-        _prevMouseY = HEIGHT/2;
+        _fpsPlayer->reset();
     }
 
     void render(float delta_time);

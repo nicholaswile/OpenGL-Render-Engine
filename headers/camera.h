@@ -1,10 +1,16 @@
-// GLM
 #ifndef CAMERA_H
 #define CAMERA_H
 
+// Custom
+#include "config.h"
+
+// GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+// SDL
+#include <SDL.h>
 
 class Camera {
 private:
@@ -46,7 +52,7 @@ public:
     // However, we may want it to track an object or stay looking at the same spot, which is why we pass a target.
     inline glm::mat4 lookAt(glm::vec3 target) {return glm::lookAt(position, target, up);}
 
-    void reset() {
+    virtual void reset() {
         position = _initialPos;
         direction = _initialDir;
         up = _initialUp;
