@@ -90,10 +90,10 @@ void Scene2::process_input(SDL_Event &event, float delta_time, bool key_down) {
     if (key_down) {
         const Uint8* keystate = SDL_GetKeyboardState(NULL);
         if (keystate[SDL_SCANCODE_UP]) {
-            if (mixer + 0.1f < 1.0f) mixer += 0.01f;
+            if ((mixer + 0.1f) < 1.0f) mixer += 0.01f;
         }
         if (keystate[SDL_SCANCODE_DOWN]) {
-            if (mixer + 0.1f < 1.0f) mixer -= 0.01f;
+            if ((mixer - 0.1f) > -1.0f) mixer -= 0.01f;
         }
     }
 }
