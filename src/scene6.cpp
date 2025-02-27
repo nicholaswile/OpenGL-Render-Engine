@@ -3,8 +3,8 @@
 void Scene6::load() {
 
     // Shaders
-    _boxShader = new Shader("shaders/6-basicPosVert.glsl", "shaders/6-basicLightColorFrag.glsl"); // texture shader
-    _lightShader = new Shader("shaders/6-basicPosVert.glsl", "shaders/6-lightColorFrag.glsl"); // texture shader
+    _boxShader = new Shader("shaders/6-VertMVP.glsl", "shaders/6-FragAmbientBox.glsl");
+    _lightShader = new Shader("shaders/6-VertMVP.glsl", "shaders/6-FragLight.glsl"); 
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  
@@ -100,8 +100,8 @@ void Scene6::render(float delta_time) {
     
     // Shader setup
     _boxShader->use();
-    _boxShader->set_vec3("BoxColor", _boxColor); // Change with GUI later.
-    _boxShader->set_vec3("LightColor", _lightColor); // Change with GUI later.
+    _boxShader->set_vec3("BoxColor", _boxColor); 
+    _boxShader->set_vec3("LightColor", _lightColor); 
 
     glm::mat4 model;
     glm::mat4 view = _fpsPlayer->_cam->getViewMatrix();
@@ -131,12 +131,13 @@ void Scene6::render(float delta_time) {
 
     // Single Light
     _lightShader->use();
+    _lightShader->set_vec3("LightColor", _lightColor);
     unsigned int view_loc = glGetUniformLocation(_lightShader->ID, "view"); 
     unsigned int proj_loc = glGetUniformLocation(_lightShader->ID, "projection"); 
     glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view)); 
     glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection)); 
     model = glm::mat4(1.f);
-    model = glm::translate(model, _lightPos); // Move with GUI later.
+    model = glm::translate(model, _lightPos); 
     model = glm::scale(model, glm::vec3(.2f));
     unsigned int model_loc = glGetUniformLocation(_lightShader->ID, "model"); 
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model)); 
@@ -177,7 +178,9 @@ void Scene6::display_ui() {
 
         {
             ImGui::Begin("NikoGL");                         
-            ImGui::Text("Color");               
+            ImGui::Text("Color");    
+            ImGui::ColorEdit3("Light color", (float*)&_lightColor); 
+            ImGui::ColorEdit3("Box color", (float*)&_boxColor); 
             ImGui::ColorEdit3("Background color", (float*)&clear_color); 
             ImGui::Text("Performance average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
