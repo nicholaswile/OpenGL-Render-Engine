@@ -8,6 +8,7 @@
 #include "scene3.h"
 #include "scene4.h"
 #include "scene5.h"
+#include "scene6.h"
 
 class SceneManager {
 private:
