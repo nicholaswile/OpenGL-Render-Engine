@@ -1,7 +1,12 @@
 # OpenGL-Renderer
-An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Compiles on Windows with `mingw32-make`. 
+An OpenGL renderer using SDL for windowing and input processing. This is a work in progress. Compiles using the included `makefile`. 
 
 ## Scenes
+
+### Ambient Lighting
+<img src="images/GL_AmbientLighting.gif">
+
+Implemented basic ambient lighting with separate shaders for box and light color. Notice how the base box color blends with the light color.
 
 ### UI Editor
 <img src="images/OGL_Editor.gif">
