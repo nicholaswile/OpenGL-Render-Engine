@@ -2,7 +2,6 @@
 #include "../headers/config.h"
 
 std::string TITLE = "NikoGL";
-// Lowered resolution for screen recording on Windows
 int WIDTH = 800, HEIGHT = 600;
 
 float previous_time = 0.0f;

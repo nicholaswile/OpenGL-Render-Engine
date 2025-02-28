@@ -3,10 +3,15 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 
 ## Scenes
 
-### Ambient Lighting
+### Naive Global Illumination (Ambient Lighting)
+<img src="images/GL_NaiveGI.gif">
+
+Extends the color blending shader with an ambient strength factor, for basic ambient lighting, a naive approach to global illumination.
+
+### Light / Color Blending
 <img src="images/GL_AmbientLighting.gif">
 
-Implemented basic ambient lighting with separate shaders for box and light color. Notice how the base box color blends with the light color.
+Implemented solid color with light influence using separate shaders for box and light color. Notice how the base box color blends with the light color.
 
 ### UI Editor
 <img src="images/OGL_Editor.gif">

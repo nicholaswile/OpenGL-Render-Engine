@@ -1,11 +1,11 @@
-#ifndef Scene6_H
-#define Scene6_H
+#ifndef Scene7_H
+#define Scene7_H
 
 // Custom
 #include "scene.h"
 #include "fpsplayer.h"
 
-class Scene6: public Scene {
+class Scene7: public Scene {
 private:
     Shader* _boxShader;
     Shader* _lightShader;
@@ -25,14 +25,15 @@ private:
     glm::vec3 _lightPos = glm::vec3(1.2f, 1.f, 2.f);
     glm::vec3 _lightColor = glm::vec3(1.f, 1.f, 1.f);
     glm::vec3 _boxColor = glm::vec3(1.f,182.f/255.f,193.f/255.f);
+    float _ambientStrength = .1f;
 
     glm::vec3 _cube_positions[10];
     glm::vec3 _cube_rotations[10];
 
 public:
     float mixer;
-    Scene6() {}
-    ~Scene6() {
+    Scene7() {}
+    ~Scene7() {
         glDeleteVertexArrays(1, &_VAO_ID_CUBE);
         glDeleteVertexArrays(1, &_VAO_ID_LIGHT);
         glDeleteBuffers(1, &_VBO_ID);

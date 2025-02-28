@@ -1,10 +1,10 @@
-#include "../headers/Scene6.h"
+#include "../headers/Scene7.h"
 
-void Scene6::load() {
+void Scene7::load() {
 
     // Shaders
-    _boxShader = new Shader("shaders/color/6-VertMVP.glsl", "shaders/color/6-FragAmbientBox.glsl");
-    _lightShader = new Shader("shaders/color/6-VertMVP.glsl", "shaders/color/6-FragLight.glsl"); 
+    _boxShader = new Shader("shaders/lighting/7-VertMVP.glsl", "shaders/lighting/7-FragAmbient.glsl");
+    _lightShader = new Shader("shaders/lighting/7-VertMVP.glsl", "shaders/lighting/7-FragLight.glsl"); 
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  
@@ -50,7 +50,6 @@ void Scene6::load() {
         -0.5f,  0.5f, -0.5f,      
     };
 
-    
     glGenBuffers(1, &_VBO_ID);                                                           
 
     glGenVertexArrays(1, &_VAO_ID_CUBE);
@@ -93,7 +92,7 @@ void Scene6::load() {
 
 }
 
-void Scene6::render(float delta_time) {
+void Scene7::render(float delta_time) {
 
     glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -102,6 +101,7 @@ void Scene6::render(float delta_time) {
     _boxShader->use();
     _boxShader->set_vec3("BoxColor", _boxColor); 
     _boxShader->set_vec3("LightColor", _lightColor); 
+    _boxShader->set_float("AmbientStrength", _ambientStrength);
 
     glm::mat4 model;
     glm::mat4 view = _fpsPlayer->_cam->getViewMatrix();
@@ -149,7 +149,7 @@ void Scene6::render(float delta_time) {
 
 }
 
-void Scene6::process_input(SDL_Event &event, float delta_time, bool key_down) {
+void Scene7::process_input(SDL_Event &event, float delta_time, bool key_down) {
     if (key_down) {
         const Uint8* keystate = SDL_GetKeyboardState(NULL);
         if (keystate[SDL_SCANCODE_SPACE]) {
@@ -166,7 +166,7 @@ void Scene6::process_input(SDL_Event &event, float delta_time, bool key_down) {
         _fpsPlayer->process_input(event, delta_time);    
 }
 
-void Scene6::display_ui() {
+void Scene7::display_ui() {
      // Start the Dear ImGui frame
     if (render_ui) {
     ImGui_ImplOpenGL3_NewFrame();
@@ -179,6 +179,7 @@ void Scene6::display_ui() {
         {
             ImGui::Begin("NikoGL");                         
             ImGui::Text("Color");    
+            ImGui::SliderFloat("Ambient Strength", &_ambientStrength, 0, 1.f);
             ImGui::ColorEdit3("Light color", (float*)&_lightColor); 
             ImGui::ColorEdit3("Box color", (float*)&_boxColor); 
             ImGui::ColorEdit3("Background color", (float*)&clear_color); 

@@ -10,6 +10,7 @@ void SceneManager::init() {
     scenes.push_back(new Scene4());
     scenes.push_back(new Scene5());
     scenes.push_back(new Scene6());
+    scenes.push_back(new Scene7());
     
     current_scene = scenes.size()-1;
     scenes[current_scene]->load();
