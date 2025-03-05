@@ -3,6 +3,10 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 
 ## Scenes
 
+### Up next: Diffuse Lighting
+
+In progress.
+
 ### Naive Global Illumination (Ambient Lighting)
 <img src="images/GL_NaiveGI.gif">
 
