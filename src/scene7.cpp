@@ -3,51 +3,52 @@
 void Scene7::load() {
 
     // Shaders
-    _boxShader = new Shader("shaders/lighting/7-VertMVP.glsl", "shaders/lighting/7-FragAmbient.glsl");
+    _boxShader = new Shader("shaders/lighting/7-VertMVP.glsl", "shaders/lighting/7-FragPhong.glsl");
     _lightShader = new Shader("shaders/lighting/7-VertMVP.glsl", "shaders/lighting/7-FragLight.glsl"); 
 
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-        -0.5f,  0.5f, -0.5f,  
-        -0.5f, -0.5f, -0.5f,  
-
-        -0.5f, -0.5f,  0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f,  
-        -0.5f, -0.5f,  0.5f,  
-
-        -0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f, -0.5f,  
-        -0.5f, -0.5f, -0.5f,  
-        -0.5f, -0.5f, -0.5f,  
-        -0.5f, -0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f,  
-
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-
-        -0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f, -0.5f,  0.5f,  
-        -0.5f, -0.5f,  0.5f,  
-        -0.5f, -0.5f, -0.5f,  
-
-        -0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f, -0.5f,      
+        // Position           // Normals
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+   
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+   
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+   
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+   
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+   
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     glGenBuffers(1, &_VBO_ID);                                                           
@@ -56,14 +57,21 @@ void Scene7::load() {
     glBindBuffer(GL_ARRAY_BUFFER, _VBO_ID);   
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);          
     glBindVertexArray(_VAO_ID_CUBE);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0); // will give layout(location = 0) in shaders. 
     
+    // First 3 values (position) at location=0
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Second 3 values (normal vectors) at location=1
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)3);
+    glEnableVertexAttribArray(1);
+    
+    // Use same vertex buffer for the light, but only care about the first 3 values (position)
     glGenVertexArrays(1, &_VAO_ID_LIGHT);
     glBindVertexArray(_VAO_ID_LIGHT);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO_ID);   
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0); // will give layout(location = 0) in shaders. 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0); 
     
     srand(static_cast<unsigned int>(time(0)));
 
@@ -102,6 +110,7 @@ void Scene7::render(float delta_time) {
     _boxShader->set_vec3("BoxColor", _boxColor); 
     _boxShader->set_vec3("LightColor", _lightColor); 
     _boxShader->set_float("AmbientStrength", _ambientStrength);
+    _boxShader->set_vec3("LightPos", _lightPos);
 
     glm::mat4 model;
     glm::mat4 view = _fpsPlayer->_cam->getViewMatrix();
@@ -181,6 +190,7 @@ void Scene7::display_ui() {
             ImGui::Text("Color");    
             ImGui::SliderFloat("Ambient Strength", &_ambientStrength, 0, 1.f);
             ImGui::ColorEdit3("Light color", (float*)&_lightColor); 
+            ImGui::InputFloat3("Light pos", (float*)&_lightPos);
             ImGui::ColorEdit3("Box color", (float*)&_boxColor); 
             ImGui::ColorEdit3("Background color", (float*)&clear_color); 
             ImGui::Text("Performance average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

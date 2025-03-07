@@ -2,7 +2,7 @@
 #include "../headers/config.h"
 
 std::string TITLE = "NikoGL";
-int WIDTH = 800, HEIGHT = 600;
+int WIDTH = 1920, HEIGHT = 1080;
 
 float previous_time = 0.0f;
 float current_time = 0.0f;
