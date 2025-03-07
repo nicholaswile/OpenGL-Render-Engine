@@ -3,9 +3,11 @@ An OpenGL renderer using SDL for windowing and input processing. This is a work 
 
 ## Scenes
 
-### Up next: Diffuse Lighting
+### Diffuse Lighting
 
-In progress.
+<img src="images/GL_Diffuse.gif">
+
+Adds surface normals to the vertex buffer, then computes diffuse lighting finding the dot product between the light direction and the surface normal at that fragment. Reuses my shader from ambient lighting.
 
 ### Naive Global Illumination (Ambient Lighting)
 <img src="images/GL_NaiveGI.gif">
