@@ -63,7 +63,7 @@ void Scene7::load() {
     glEnableVertexAttribArray(0);
 
     // Second 3 values (normal vectors) at location=1
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)3);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
     
     // Use same vertex buffer for the light, but only care about the first 3 values (position)
@@ -148,6 +148,9 @@ void Scene7::render(float delta_time) {
     model = glm::mat4(1.f);
     model = glm::translate(model, _lightPos); 
     model = glm::scale(model, glm::vec3(.2f));
+    float timescaled = (float)SDL_GetTicks()/1000.0f;
+    _lightPos.r = cos(timescaled);
+    _lightPos.b = sin(timescaled);
     unsigned int model_loc = glGetUniformLocation(_lightShader->ID, "model"); 
     glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model)); 
     glBindVertexArray(_VAO_ID_LIGHT);
